@@ -1,7 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Post, Reply, Comment, UserBookmarkPost, User
+from .models import Post, Comment, UserBookmarkPost, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -35,11 +35,6 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = '__all__'
-
-class ReplySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reply
         fields = '__all__'
 
 class UserBookmarkPostSerializer(serializers.ModelSerializer):

@@ -1,6 +1,5 @@
 import { useContext, useEffect } from "react";
 // import Navbar from "../../components/Navbar/Navbar";
-import "./Login.css";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function Login() {
@@ -24,37 +23,36 @@ export default function Login() {
             <div className="flex flex-col">
               <div className="flex flex-col gap-2">
                 <div>
-                <label htmlFor="user-username">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  aria-invalid="false"
-                  className="w-full py-3 border-slate-200 px-3 focus:outline-none focus:border-slate-200 hover:shadow rounded border-2"
-                  maxLength="100"
-                /></div>
+                  <p className="font-medium text-slate-700 pb-2"
+                  >Email</p>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    aria-invalid="false"
+                    className="w-full py-3 border-slate-200 px-3 focus:outline-none focus:border-slate-200 hover:shadow rounded border-2"
+                    autoComplete='email'
+                    maxLength="100"
+                  /></div>
                 <div className="mt-5">
-                <label
-                  htmlFor="password"
-                  className="font-medium text-slate-700 pb-2"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  aria-invalid="false"
-                  className="w-full py-3  border-slate-200 px-3 focus:outline-none focus:border-slate-500 hover:shadow  rounded border-2"
-                  maxLength="128"
-                />
+                  <p className="font-medium text-slate-700 pb-2"
+                  >Password</p>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    aria-invalid="false"
+                    className="w-full py-3 border-slate-200 px-3 focus:outline-none focus:border-slate-200 hover:shadow rounded border-2"
+                    autoComplete='current-password'
+                    maxLength="128"
+                  />
                 </div>
               </div>
-                <a href="#" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
-                  Forgot Password?
-                </a>
+              <a href="#" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
+                Forgot Password?
+              </a>
             </div>
             <button
               id="submit-btn"
@@ -67,6 +65,6 @@ export default function Login() {
         </div>
       </div>
     </>
-    
+
   );
 }

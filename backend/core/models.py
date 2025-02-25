@@ -10,7 +10,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Post(models.Model):
-    postid = models.BigAutoField(db_column='postID', primary_key=True)  # Field name made lowercase.
+    postid = models.BigAutoField(db_column='postID', primary_key=True)
     p_date = models.DateTimeField()
     groupurl = models.CharField(db_column='groupURL', max_length=255, blank=True, null=True)  # Field name made lowercase.
     posturl = models.CharField(db_column='postURL', unique=True, max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -19,21 +19,12 @@ class Post(models.Model):
     react_num = models.IntegerField(blank=True, null=True)
     cmt_num = models.IntegerField(blank=True, null=True)
     statusid = models.ForeignKey('Status', on_delete=models.CASCADE, db_column='statusID', blank=True, null=True)  # Field name made lowercase.
-    replyid = models.ForeignKey('Reply', on_delete=models.CASCADE, help_text="Reply for the post", db_column='replyID', blank=True, null=True)  # Field name made lowercase.
+    reply = models.TextField(blank=True, null=True)
+    r_date = models.DateTimeField(blank=True, null=True)
     def __str__(self):
         return self.postid
     class Meta:
         db_table = 'post'
-
-class Reply(models.Model):
-    replyid = models.BigAutoField(db_column='replyID', primary_key=True)
-    postid = models.ForeignKey(Post, on_delete=models.CASCADE)
-    r_date = models.DateTimeField()
-    reply = models.TextField(blank=True, null=True)
-    def __str__(self):
-        return self.replyid
-    class Meta:
-        db_table = 'reply'
 
 
 
@@ -65,8 +56,8 @@ class User(AbstractUser):
     first_name = None
     last_name = None
     groups = None
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email"]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
     class Meta:
         db_table = 'user'
     def __str__(self):

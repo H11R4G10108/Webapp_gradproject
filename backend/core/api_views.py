@@ -1,5 +1,5 @@
-from .models import Post, Reply, Comment, UserBookmarkPost, User
-from .serializers import UserSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, PostSerializer, CommentSerializer, ReplySerializer, UserBookmarkPostSerializer
+from .models import Post, Comment, UserBookmarkPost, User
+from .serializers import UserSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, PostSerializer, CommentSerializer, UserBookmarkPostSerializer
 from django.http import JsonResponse
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import api_view, permission_classes
