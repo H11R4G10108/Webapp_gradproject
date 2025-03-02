@@ -22,7 +22,8 @@ export default function Sidebar() {
     if (path === '/') return 'Home';
     if (path.includes('/reply-bot')) return 'Reply bot';
     if (path.includes('/bookmarks')) return 'Bookmarks';
-    if (path.includes('/settings')) return 'Settings';
+    if (path.includes('/settings/account-information')) return 'Settings';
+    if (path.includes('/settings/change-password')) return 'Settings';
     if (path.includes('/sign-out')) return 'Sign out';
     return ''; 
   };
@@ -42,7 +43,7 @@ export default function Sidebar() {
     const { logoutUser } = useContext(AuthContext);
 
   return (
-    <div className="w-64 bg-slate-100 h-screen border-r-2">
+    <div className="w-72 bg-slate-100 h-screen border-r-2 p-5">
       <div className="flex flex-col justify-center h-16">
         <h1 className="text-3xl font-bold text-orange-500 p-2">FLICDex</h1>
       </div>
@@ -59,7 +60,7 @@ export default function Sidebar() {
           {renderIcon('Bookmarks', BookmarkIconOutline, BookmarkIconSolid)}
           <span className="text-base">Bookmarks</span>
         </Link>
-        <Link to="/settings" className={linkClasses('Settings')}>
+        <Link to= "/settings/account-information" className={linkClasses('Settings')}>
           {renderIcon('Settings', Cog6ToothIconOutline, Cog6ToothIconSolid)}
           <span className="text-base">Settings</span>
         </Link>

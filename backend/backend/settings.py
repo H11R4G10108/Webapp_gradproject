@@ -83,9 +83,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'facebook_posts_db',
-        'USER': 'root',
+        'USER': 'admin',
         'PASSWORD': 'Lpu0108.',
-        'HOST': '127.0.0.1',
+        'HOST': 'facebookpost-db.cb2eoiguscip.ap-southeast-2.rds.amazonaws.com',
         'PORT': '3306',
     }
 }

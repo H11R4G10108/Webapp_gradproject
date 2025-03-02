@@ -11,7 +11,8 @@ export default function Header() {
         if (path === '/') return 'Home';
         if (path.includes('/reply-bot')) return 'Reply bot';
         if (path.includes('/bookmarks')) return 'Bookmarks';
-        if (path.includes('/settings')) return 'Settings';
+        if (path.includes('/settings/account-information')) return 'Account Information';
+        if (path.includes('/settings/change-password')) return 'Change Password';
         return ''; 
       };
       const title = getTitle(); 
@@ -24,9 +25,9 @@ export default function Header() {
         e.preventDefault();
         window.location.href = "/search-articles/" + searchString;
       };
-      const excludedPaths = ["/settings", "/reply-bot"];
+      const excludedPaths = ["/settings/change-password", "/reply-bot", "/settings/account-information"];
     return (
-        <div className="flex flex-row px-5 justify-between sticky top-0 bg-slate-100 p-3 border-b-2 h-16 align-center">
+        <div className="flex flex-row justify-between sticky top-0 bg-slate-100 p-3 border-b-2 h-16 align-center">
         <p className="text-2xl font-bold">{title}</p>
         {/* SEARCH FUNCTION */}
 
