@@ -17,7 +17,8 @@ export default function Login() {
   return (
     <>
       <div className="flex justify-center items-center h-screen bg-slate-100">
-        <div className="max-w-lg w-full mx-auto gap-15">
+      <div className="w-2/3 max-w-md mx-auto bg-slate-100 p-8 rounded-lg shadow-md">
+      
           <h1 className="text-4xl font-bold mb-5 text-orange-500" id="typewriter">Welcome to FLICDex!</h1>
           <form onSubmit={submitHandler}>
             <div className="flex flex-col">
@@ -56,7 +57,7 @@ export default function Login() {
             </div>
             <button
               id="submit-btn"
-              className="px-4 py-2 mt-5 w-full hover:bg-orange-300 rounded border text-xm bg-orange-500 text-white"
+              className="p-2 mt-5 w-full hover:bg-orange-300 rounded border text-xm bg-orange-500 text-white"
               type="submit"
             >
               Sign in

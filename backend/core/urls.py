@@ -16,12 +16,6 @@ urlpatterns = [
     path('api/change-password/', api_views.ChangePasswordView.as_view(), name='change_password'),
     path('api/change-user-infor/', api_views.ChangeUserInfoView.as_view(), name='change_user_infor'),
     path('api/user/profile/', UserProfileView.as_view(), name='user-profile'),
-# Password reset request (sends email)
-    path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
-    path('password-reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
-
-    # Link from email to confirm reset
-    path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('password-reset-complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('', api_views.getRoutes),
 ]

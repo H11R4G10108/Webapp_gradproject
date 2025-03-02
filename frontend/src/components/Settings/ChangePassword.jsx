@@ -110,10 +110,6 @@ export default function ChangePassword() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 onBlur={handleFocus}
                                 focused={focused.toString()} />
-                            <span className="text-xs p-1 text-red-700 hidden">
-                                Password should be 8-20 characters and include at least 1
-                                letter, 1 number and 1 special character!
-                            </span>
                         </div>
                         <div className="flex flex-col mt-4">
                             <label className="text-sm font-semibold">Confirm Password</label>
