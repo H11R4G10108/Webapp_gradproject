@@ -1,5 +1,7 @@
 import Sidebar from '../Sidebar/Sidebar'
 import Header from '../Header/Header'
+import PostList from './PostList'
+
 export default function Home() {
 
     return (
@@ -8,6 +10,7 @@ export default function Home() {
             <div className='flex flex-col w-full'>
                 <Header />
                 <div className="flex justify-center items-center w-auto bg-slate-100"> 
+                    <PostList />
                 </div>
                 </div>
         </div>

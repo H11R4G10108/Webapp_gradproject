@@ -11,6 +11,7 @@ import UpdateUsername from './components/Settings/UpdateUsername.jsx';
 import UpdateEmail from './components/Settings/UpdateEmail.jsx';
 import ForgotPassword from './components/Settings/ForgotPassword.jsx';
 import PasswordReset from './components/Settings/PasswordReset.jsx';
+import PostDetail from './components/Home/PostDetail.jsx';
 
 function App() {
   return (
@@ -21,6 +22,14 @@ function App() {
           element={
             <PrivateRoute>
               <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/post/:id"
+          element={
+            <PrivateRoute>
+              <PostDetail />
             </PrivateRoute>
           }
         />
@@ -70,7 +79,7 @@ function App() {
             <ForgotPassword />
           }
         />
-                <Route
+        <Route
           path="/password-reset/:token"
           element={
             <PasswordReset />

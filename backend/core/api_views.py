@@ -12,6 +12,8 @@ from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import ListAPIView
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -87,6 +89,10 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = LimitOffsetPagination
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    pagination_class = LimitOffsetPagination
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -98,3 +104,14 @@ class UserProfileView(APIView):
             "email": user.email
         })
 
+# Define pagination class
+class PostPagination(PageNumberPagination):
+    page_size = 6  # 8 posts per page
+    page_size_query_param = 'page_size'
+    max_page_size = 20  # Optional: Limit max page size
+
+# Create the API view
+class PostListView(ListAPIView):
+    queryset = Post.objects.all().order_by('-p_date')  # Order by most recent
+    serializer_class = PostSerializer
+    pagination_class = PostPagination
