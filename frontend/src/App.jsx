@@ -12,7 +12,8 @@ import UpdateEmail from './components/Settings/UpdateEmail.jsx';
 import ForgotPassword from './components/Settings/ForgotPassword.jsx';
 import PasswordReset from './components/Settings/PasswordReset.jsx';
 import PostDetail from './components/Home/PostDetail.jsx';
-
+import Bookmarks from './components/Bookmarks/Bookmarks.jsx';
+import SearchResult from './components/SearchPage/SearchResult.jsx';
 function App() {
   return (
     <AuthProvider>
@@ -30,6 +31,18 @@ function App() {
           element={
             <PrivateRoute>
               <PostDetail />
+            </PrivateRoute>
+          }
+        />
+                    <Route
+              path="/search-post/:searchstring"
+              element={<SearchResult />}
+            />
+                <Route
+          path="/bookmarks/"
+          element={
+            <PrivateRoute>
+              <Bookmarks />
             </PrivateRoute>
           }
         />

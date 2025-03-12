@@ -110,7 +110,7 @@ export default function PostDetail() {
 
                         </p>
                     </div>
-                    <button className="flex items-center bg-slate-100 border border-black px-4 py-2 rounded-lg mt-auto hover:bg-slate-300">
+                    <button className="flex items-center bg-slate-100 border border-black px-4 py-2 rounded-lg mt-auto hover:bg-gray-200">
                         <ClipboardDocumentIcon className="h-5 w-5 mr-2" />
                         Copy
                     </button>

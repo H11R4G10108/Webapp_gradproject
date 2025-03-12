@@ -79,6 +79,8 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserBookmarkPostSerializer(serializers.ModelSerializer):
+    post = PostSerializer(source='postid', read_only=True)  # Fetch related post details
+
     class Meta:
         model = UserBookmarkPost
-        fields = '__all__'
+        fields = ['markid', 'userid', 'post']  # Include `post` instead of just `postid`

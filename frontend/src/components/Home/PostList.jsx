@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import useAxios from "../../utils/useAxios";
+import Swal from "sweetalert2";
+import { BookmarkIcon as BookmarkOutline } from "@heroicons/react/24/outline";
+import { BookmarkIcon as BookmarkSolid } from "@heroicons/react/24/solid";
 
 export default function PostList() {
   const [loading, setLoading] = useState(false);
@@ -11,28 +15,28 @@ export default function PostList() {
   const [prevPage, setPrevPage] = useState(null);
   const [error, setErrors] = useState("");
   const [sortOption, setSortOption] = useState("latest");
+  const api = useAxios();
 
-  useEffect(() => {
-    const loadPosts = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/posts/?page=${currentPage}`
-        );
-        setPosts(response.data.results || []);
-        setTotalPages(response.data.total_pages);
-        setNextPage(response.data.next);
-        setPrevPage(response.data.previous);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-        setErrors("Failed to load posts.");
-      }
-      setLoading(false);
-    };
-
-    loadPosts();
-  }, [currentPage]);
+    useEffect(() => {
+      const loadPosts = async () => {
+        setLoading(true);
+        try {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/posts/?page=${currentPage}`
+          );
+          setPosts(response.data.results || []);
+          setTotalPages(response.data.total_pages);
+          setNextPage(response.data.next);
+          setPrevPage(response.data.previous);
+        } catch (error) {
+          console.error("Error fetching posts:", error);
+          setErrors("Failed to load posts.");
+        }
+        setLoading(false);
+      };
+  
+      loadPosts();
+    }, [currentPage, sortOption]);
 
   if (loading) return (
     <div
@@ -64,49 +68,49 @@ export default function PostList() {
   );
 
   if (error) return <p>{error}</p>;
-  // Pagination UI Logic with NaN check
-  const renderPageNumbers = () => {
-    const pages = [];
-    const maxPagesToShow = 5;
+  const toggleBookmark = async (postId) => {
+    try {
+      const response = await api.post(
+        `http://127.0.0.1:8000/api/bookmark-toggle/${postId}/`
+      );
 
-    if (!totalPages || isNaN(totalPages)) return null; // FIX: Avoid rendering NaN pages
-
-    if (totalPages <= maxPagesToShow) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
+      if (response.status === 201) {
+        Swal.fire({
+          title: "Bookmark added",
+          icon: "success",
+          toast: true,
+          timer: 3000,
+          position: "bottom",
+          showCloseButton: false,
+          showConfirmButton: false,
+          width: "25em",
+        });
+      } else if (response.status === 204) {
+        Swal.fire({
+          title: "Bookmark removed",
+          icon: "success",
+          toast: true,
+          timer: 3000,
+          position: "bottom",
+          showCloseButton: false,
+          showConfirmButton: false,
+          width: "25em",
+        });
       }
-    } else {
-      pages.push(1, 2, 3);
-
-      if (currentPage > 4) {
-        pages.push("...");
-      }
-
-      if (currentPage > 3 && currentPage < totalPages - 2) {
-        pages.push(currentPage);
-      }
-
-      if (currentPage < totalPages - 3) {
-        pages.push("...");
-      }
-
-      pages.push(totalPages - 1, totalPages);
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      Swal.fire({
+        title: "There was an error",
+        text: "Please try again",
+        icon: "error",
+        toast: true,
+        timer: 6000,
+        position: "bottom-right",
+        timerProgressBar: true,
+        showCloseButton: true,
+        showConfirmButton: false,
+      });
     }
-
-    return pages.map((page, index) =>
-      typeof page === "number" ? (
-        <button
-          key={index}
-          onClick={() => setCurrentPage(page)}
-          className={`px-3 py-1 mx-1 border rounded ${page === currentPage ? "bg-black text-white" : "bg-gray-200"
-            }`}
-        >
-          {page}
-        </button>
-      ) : (
-        <span key={index} className="px-2 text-gray-500">...</span>
-      )
-    );
   };
 
   const sortedPosts = [...posts].sort((a, b) => {
@@ -134,8 +138,19 @@ export default function PostList() {
             className="border border-slate-200 shadow-sm h-56 rounded-md p-7 bg-slate-50"
             key={index}
           >
-            <p className="text-sm p-2 font-bold"> {new Date(post.p_date).toLocaleTimeString()} {new Date(post.p_date).toLocaleDateString()}
+            <div className="flex p-2 justify-between">
+            <p className="text-sm font-bold">{new Date(post.p_date).toLocaleTimeString()}{" "}
+              {new Date(post.p_date).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
             </p>
+                         {/* Bookmark Button */}
+                <button onClick={() => toggleBookmark(post.postid)}>
+                    <BookmarkOutline className="h-5 w-5 text-orange-500" />
+                </button>
+            </div>
             <div className="p-2 leading-5">
               <h2 className="mb-1 text-xm">
                 {post.content.length > 50 ? (

@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from core import api_views
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordResetDoneView, PasswordResetCompleteView
-from core.api_views import UserProfileView, PostListView
+from core.api_views import UserProfileView, PostListView, BookmarkListView, ToggleBookmarkView
 
 router = DefaultRouter()
 router.register(r'users', api_views.UserViewSet)
@@ -19,5 +19,7 @@ urlpatterns = [
     path('api/user/profile/', UserProfileView.as_view(), name='user-profile'),
     path('api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('api/posts/', PostListView.as_view(), name='post-list'),
+    path('api/bookmarks/', BookmarkListView.as_view(), name='bookmark-list'),
+    path('api/bookmark-toggle/<int:postid>/', ToggleBookmarkView.as_view(), name='toggle-bookmark'),
     path('', api_views.getRoutes),
 ]

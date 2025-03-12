@@ -56,7 +56,7 @@ class Post(models.Model):
     reply = models.TextField(blank=True, null=True)
     r_date = models.DateTimeField(blank=True, null=True)
     def __str__(self):
-        return self.postid
+        return f"Post {self.postid}"
     class Meta:
         db_table = 'post'
 
@@ -104,3 +104,6 @@ class UserBookmarkPost(models.Model):
     postid = models.ForeignKey(Post, on_delete=models.CASCADE)  # Field name made lowercase.
     class Meta:
         db_table = 'userbookmarkpost'
+
+    def __str__(self):
+        return f"Bookmark {self.markid}"

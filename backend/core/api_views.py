@@ -3,7 +3,7 @@ from .serializers import UserSerializer, MyTokenObtainPairSerializer, ChangePass
 from django.http import JsonResponse
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -14,6 +14,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
+from rest_framework import filters
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -89,10 +90,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = LimitOffsetPagination
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
+    search_fields = ['content']
+    filter_backends = (filters.SearchFilter,)
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -115,3 +119,28 @@ class PostListView(ListAPIView):
     queryset = Post.objects.all().order_by('-p_date')  # Order by most recent
     serializer_class = PostSerializer
     pagination_class = PostPagination
+
+class BookmarkListView(ListAPIView):
+    serializer_class = UserBookmarkPostSerializer
+    pagination_class = PostPagination
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.request.query_params.get('userid')
+        sort_order = self.request.query_params.get('sort', 'desc')  # Default: newest first
+        queryset = UserBookmarkPost.objects.filter(userid=user_id)
+        return queryset.order_by('-postid__p_date' if sort_order == 'desc' else 'postid__p_date')
+
+# Add/Remove Bookmark API
+class ToggleBookmarkView(APIView):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        post_id = self.kwargs.get("postid")
+        post = get_object_or_404(Post, postid=post_id)
+        bookmark, created = UserBookmarkPost.objects.get_or_create(userid=user, postid=post)
+
+        if not created:
+            bookmark.delete()
+            return Response({"message": "Bookmark removed"}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response({"message": "Bookmark added"}, status=status.HTTP_201_CREATED)
