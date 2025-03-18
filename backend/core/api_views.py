@@ -120,6 +120,7 @@ class PostListView(ListAPIView):
     serializer_class = PostSerializer
     pagination_class = PostPagination
 
+
 class BookmarkListView(ListAPIView):
     serializer_class = UserBookmarkPostSerializer
     pagination_class = PostPagination
@@ -130,6 +131,14 @@ class BookmarkListView(ListAPIView):
         sort_order = self.request.query_params.get('sort', 'desc')  # Default: newest first
         queryset = UserBookmarkPost.objects.filter(userid=user_id)
         return queryset.order_by('-postid__p_date' if sort_order == 'desc' else 'postid__p_date')
+
+class BookmarkListViewForMark(ListAPIView):
+    serializer_class = UserBookmarkPostSerializer
+    permission_classes = []
+    def get_queryset(self):
+        user_id = self.request.query_params.get('userid')
+        queryset = UserBookmarkPost.objects.filter(userid=user_id)
+        return queryset
 
 # Add/Remove Bookmark API
 class ToggleBookmarkView(APIView):

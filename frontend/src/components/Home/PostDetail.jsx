@@ -82,7 +82,7 @@ export default function PostDetail() {
                                 <p className="text-xm text-gray-500">
                                     {new Date(post.p_date).toLocaleTimeString()} {new Date(post.p_date).toLocaleDateString()}
                                 </p>
-                                <Link to={post.postURL} className="text-blue-500 hover:underline">
+                                <Link to={post.posturl} className="text-blue-500 hover:underline">
                                     Link →
                                 </Link>
                             </div>

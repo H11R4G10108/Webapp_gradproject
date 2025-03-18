@@ -73,7 +73,7 @@ export default function SettingPage() {
                             <p
                                 className="border border-gray-300 rounded-lg p-2 mt-1">{user.username}</p>
                             <a href="/settings/account-information/change-username" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
-                                Change username →
+                                Change Username →
                             </a>
                         </div>
                         <div className="flex flex-col mt-4">

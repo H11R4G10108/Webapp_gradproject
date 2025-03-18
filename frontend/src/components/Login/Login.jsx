@@ -12,8 +12,6 @@ export default function Login() {
     console.log(email);
     console.log(password);
   };
-
-
   return (
     <>
       <div className="flex justify-center items-center h-screen bg-slate-100">

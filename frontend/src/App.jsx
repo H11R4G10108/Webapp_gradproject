@@ -14,6 +14,8 @@ import PasswordReset from './components/Settings/PasswordReset.jsx';
 import PostDetail from './components/Home/PostDetail.jsx';
 import Bookmarks from './components/Bookmarks/Bookmarks.jsx';
 import SearchResult from './components/SearchPage/SearchResult.jsx';
+import NewFunc from './components/Home/new.jsx';
+
 function App() {
   return (
     <AuthProvider>
@@ -99,6 +101,8 @@ function App() {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/test" element={<NewFunc />} />
+
       </Routes>
     </AuthProvider>
   )
