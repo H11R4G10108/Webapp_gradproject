@@ -8,25 +8,23 @@ import { BookmarkIcon as BookmarkOutline } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkSolid } from "@heroicons/react/24/solid";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { jwtDecode } from "jwt-decode";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 
 export default function PostList() {
+  const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [error, setErrors] = useState("");
-  const [bookmarkedPosts, setBookmarkedPosts] = useState(new Set()); // ✅ Use Set
+  const [bookmarkedPosts, setBookmarkedPosts] = useState(new Set());
   const [sortOption, setSortOption] = useState("latest");
   const api = useAxios();
   const { ref, inView } = useInView({ threshold: 1 });
-
-  const token = localStorage.getItem("authTokens");
-  let user_id = 0;
-  if (token) {
-    const decode = jwtDecode(token);
-    user_id = decode.userid;
-  }
+  const user_id = user ? user.user_id : null;
+  const [viewMode, setViewMode] = useState("tiles");
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -152,7 +150,7 @@ export default function PostList() {
   // Skeleton Loader
   const SkeletonLoader = () => {
     return (
-      <div className="border border-gray-200 shadow-sm h-56 w-full rounded-md p-7 bg-gray-100">
+      <div className="border border-gray-200 shadow-sm w-full rounded-md p-5 bg-gray-100">
         <div className="flex justify-between p-2">
           <Skeleton width={80} height={16} />
           <Skeleton width={24} height={24} circle />
@@ -170,23 +168,76 @@ export default function PostList() {
   return (
     <div>
       <div>
-        {!loading && (
-          <div className="flex px-20 pt-5">
-            <span className="text-gray-500 mr-2">Sort by</span>
-            <select
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-              className="border px-3 py-1 rounded-md"
-            >
-              <option value="latest">Latest articles</option>
-              <option value="oldest">Oldest articles</option>
-            </select>
+          <div className="pt-2 flex justify-between items-center px-20">
+            <div className="p-3">
+              <span className="text-gray-500 mr-2">Sort by</span>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="border px-3 py-1 rounded-md"
+              >
+                <option value="latest">Latest articles</option>
+                <option value="oldest">Oldest articles</option>
+              </select>
+            </div>
+            <div className="flex ">
+              <button className={`border-l-2 rounded-tl-md p-1.5 transition ${viewMode === "tiles" ? "bg-gray-200" : "bg-white"}`}
+              onClick={() => setViewMode("tiles")}><Squares2X2Icon className="h-7 w-7" /></button>
+              <button className={`border-2 rounded-tr-md p-1.5 transition ${viewMode === "list" ? "bg-gray-200" : "bg-white"}`} onClick={() => setViewMode("list")}><ListBulletIcon className="h-7 w-7" /></button>
+            </div>
+            <div className="ml-3.5 hidden">
+              <span className="text-gray-500 mr-2">View</span>
+              <select
+                value={viewMode}
+                onChange={(e) => setViewMode(e.target.value)}
+                className="border px-3 py-1 rounded-md">
+                <option value="tiles" > Tiles</option>
+                <option value="content">Content</option>
+                <option value="list">List</option>
+                <option value="detail">Detail</option>
+              </select>
+            </div>
           </div>
-        )}
-        <div className="gap-10 grid grid-cols-3 px-20 pt-5">
-          {sortedPosts && sortedPosts.map((post, index) => (
+        {/* List vỉew mode */}
+        <div className="flex flex-col gap-5 px-20 pt-5">
+          {viewMode === "list" && sortedPosts && sortedPosts.map((post, index) => (
             <div
-              className="border border-slate-200 shadow-sm h-56 rounded-md p-7 bg-slate-50"
+              className="border border-slate-200 shadow-sm rounded-md p-7 bg-slate-50 w-full max-w-full"
+              key={index}
+            >
+              <div className="flex p-2 justify-between">
+                <p className="text-sm font-bold">
+                  {new Date(post.p_date).toLocaleTimeString()}{" "}
+                  {new Date(post.p_date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </p>
+                <button onClick={() => toggleBookmark(post.postid)}>
+                  {bookmarkedPosts?.has(post.postid) ? (
+                    <BookmarkSolid className="h-5 w-5 text-orange-500" />
+                  ) : (
+                    <BookmarkOutline className="h-5 w-5 text-orange-500" />
+                  )}
+                </button>
+              </div>
+              <div className="p-2 leading-5">
+                <h2 className="mb-1 text-xm">
+                  {post.content}
+                </h2>
+              </div>
+              <Link to={`/post/${post.postid}`} className="text-blue-500 hover:underline ml-1">
+                See full post →
+              </Link>
+            </div>
+          ))}
+        </div>
+        {/* Tiles view mode  */}
+        <div className="gap-10 grid grid-cols-3 px-20 ">
+          {viewMode === "tiles" && sortedPosts && sortedPosts.map((post, index) => (
+            <div
+              className="border border-slate-200 shadow-sm rounded-md p-7 bg-slate-50"
               key={index}
             >
               <div className="flex p-2 justify-between">
@@ -220,8 +271,16 @@ export default function PostList() {
       </div>
       {/* Infinite Scroll Trigger */}
       <div className="gap-10 grid grid-cols-3 px-20 pt-5">
-        {hasMore &&
+        {hasMore && viewMode === "tiles" &&
           Array(3)
+            .fill(0)
+            .map((_, index) => <div ref={ref} key={index}>
+              <SkeletonLoader /></div>
+            )}
+      </div>
+      <div className="px-20 pt-5">
+        {hasMore && viewMode === "list" &&
+          Array(1)
             .fill(0)
             .map((_, index) => <div ref={ref} key={index}>
               <SkeletonLoader /></div>

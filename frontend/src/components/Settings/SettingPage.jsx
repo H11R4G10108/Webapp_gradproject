@@ -5,14 +5,13 @@ import { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+
 export default function SettingPage() {
-    const token = localStorage.getItem("authTokens");
-    var user_id = 0;
-    if (token) {
-        const decode = jwtDecode(token);
-        var user_id = decode.userid;
-    }
-    const [user, setUser] = useState({ username: "", email: "" });
+    const { user } = useContext(AuthContext);
+    const user_id = user ? user.user_id : null;
+    const [users, setUser] = useState({ username: "", email: "" });
     const [loading, setLoading] = useState(true);
     const [error, setErrors] = useState("");
     useEffect(() => {
@@ -71,7 +70,7 @@ export default function SettingPage() {
                         <div className="flex flex-col mt-4">
                             <label className="text-sm font-semibold">Username</label>
                             <p
-                                className="border border-gray-300 rounded-lg p-2 mt-1">{user.username}</p>
+                                className="border border-gray-300 rounded-lg p-2 mt-1">{users.username}</p>
                             <a href="/settings/account-information/change-username" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
                                 Change Username →
                             </a>
@@ -79,7 +78,7 @@ export default function SettingPage() {
                         <div className="flex flex-col mt-4">
                             <label className="text-sm font-semibold">Email</label>
                             <p
-                                className="border border-gray-300 rounded-lg p-2 mt-1">{user.email}</p>
+                                className="border border-gray-300 rounded-lg p-2 mt-1">{users.email}</p>
                             <a href="/settings/account-information/change-email" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
                                 Change Email →
                             </a>

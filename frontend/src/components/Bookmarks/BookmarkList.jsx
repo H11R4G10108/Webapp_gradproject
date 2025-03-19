@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import useAxios from "../../utils/useAxios";
 import { BookmarkSlashIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
 
 export default function BookmarkList() {
     const [loading, setLoading] = useState(false);
@@ -15,13 +16,9 @@ export default function BookmarkList() {
     const [prevPage, setPrevPage] = useState(null);
     const [error, setErrors] = useState("");
     const [sortOption, setSortOption] = useState("desc");
-    const token = localStorage.getItem("authTokens");
     const api = useAxios();
-    var user_id = 0;
-    if (token) {
-        const decode = jwtDecode(token);
-        var user_id = decode.userid;
-    }
+    const { user } = useContext(AuthContext);
+    const user_id = user ? user.user_id : null;
     useEffect(() => {
         const loadPosts = async () => {
             setLoading(true);

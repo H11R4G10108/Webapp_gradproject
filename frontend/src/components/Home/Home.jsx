@@ -9,7 +9,7 @@ export default function Home() {
             <Sidebar />
             <div className='flex flex-col w-full'>
                 <Header />
-                <div className="flex justify-center items-center w-auto bg-slate-100"> 
+                <div className="bg-slate-100"> 
                     <PostList />
                 </div>
                 </div>
