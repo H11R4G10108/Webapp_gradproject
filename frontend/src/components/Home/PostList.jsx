@@ -169,7 +169,7 @@ export default function PostList() {
     <div>
       <div>
           <div className="pt-2 flex justify-between items-center px-20">
-            <div className="p-3">
+            <div className="py-3">
               <span className="text-gray-500 mr-2">Sort by</span>
               <select
                 value={sortOption}
