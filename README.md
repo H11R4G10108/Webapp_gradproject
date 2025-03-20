@@ -1,14 +1,14 @@
 ## Ongoing Project: Web application for managing articles on Facebook 
 
-##Techstack:
+## Techstack:
 
-Frontend: HTML, CSS with Tailwind library, React.js framework 
+- Frontend: HTML, CSS with Tailwind library, React.js framework 
 
-Backend: Python with Django framework
+- Backend: Python with Django framework
 
-Database: MySQL (deployed on AWS RDS)
+- Database: MySQL (deployed on AWS RDS)
 
-##Supported features:
+## Supported features:
 
 Posts: 
 
@@ -20,4 +20,4 @@ Posts:
 
 User Management:
 
--Login & Logout, account management (change username, email, password, reset password)
+- Login & Logout, account management (change username, email, password, reset password)
