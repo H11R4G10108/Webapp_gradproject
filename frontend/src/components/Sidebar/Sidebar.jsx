@@ -13,6 +13,8 @@ import {
   SparklesIcon as SparklesIconSolid,
   ArrowLeftOnRectangleIcon as ArrowLeftOnRectangleIconSolid,
 } from '@heroicons/react/24/solid';
+import {Bars3Icon} from '@heroicons/react/24/solid';
+
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 export default function Sidebar() {
@@ -30,23 +32,25 @@ export default function Sidebar() {
   const activeLink = getActiveLink(); 
   const linkClasses = (link) =>
     activeLink === link
-      ? 'flex items-center bg-orange-500 text-white p-1 rounded'
+      ? 'flex items-center bg-orange-100 text-orange-500 p-1 rounded'
       : 'flex items-center text-black hover:text-orange-500 p-1 rounded';
 
   const renderIcon = (link, IconOutline, IconSolid) => {
     return activeLink === link ? (
       <IconSolid className="h-5 w-5 mr-2" />
     ) : (
-      <IconOutline className="h-6 w-6 mr-2" />
+      <IconOutline className="h-5 w-5 mr-2" />
     );
   };
     const { logoutUser } = useContext(AuthContext);
 
   return (
-    <div className="w-72 bg-slate-100 h-screen border-r-2 p-5">
-      <div className="flex flex-col justify-center h-16">
-        <h1 className="text-3xl font-bold text-orange-500 p-2">FLICDex</h1>
+    <div className="w-72 bg-slate-100 h-screen border-r-2 p-5 sticky top-0">
+      <div className="p-2 flex flex-row items-center">
+        <Bars3Icon className="h-7 w-7 mr-2" />
+        <h1 className="text-3xl font-bold text-orange-500">Dex</h1>
       </div>
+      <hr className="mt-2 mb-5 text-slate-300"></hr>
       <div className="flex flex-col p-2 gap-4">
         <Link to="/" className={linkClasses('Home')}>
           {renderIcon('Home', HomeIconOutline, HomeIconSolid)}

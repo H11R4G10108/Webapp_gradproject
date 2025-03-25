@@ -8,8 +8,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
@@ -27,7 +25,12 @@ def getRoutes(request):
     '/api/users',
     '/api/change-password/',
     '/api/change-user-infor/',
-        '/api/user/profile/'
+    '/api/user/profile/',
+    '/api/bookmark-for-check/'  ,
+    '/api/bookmarks/',
+    '/api/bookmark-toggle/<int:postid>/',
+    '/api/posts/',
+    '/api/password_reset/',
 ]
     return Response(routes)
 class ChangePasswordView(UpdateAPIView):
@@ -110,7 +113,7 @@ class UserProfileView(APIView):
 
 # Define pagination class
 class PostPagination(PageNumberPagination):
-    page_size = 6  # 8 posts per page
+    page_size = 9  # 8 posts per page
     page_size_query_param = 'page_size'
     max_page_size = 20  # Optional: Limit max page size
 

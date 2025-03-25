@@ -6,6 +6,7 @@ import { BookmarkSlashIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
+import { useRef } from "react";
 
 export default function BookmarkList() {
     const [loading, setLoading] = useState(false);
@@ -27,9 +28,6 @@ export default function BookmarkList() {
                     `http://127.0.0.1:8000/api/bookmarks/?userid=${user_id}&page=${currentPage}&sort=${sortOption}`
                 );
                 setPosts(response.data.results || []);
-                setTotalPages(response.data.total_pages);
-                setNextPage(response.data.next);
-                setPrevPage(response.data.previous);
                 console.log(response.data);
             } catch (error) {
                 console.error("Error fetching posts:", error);
@@ -137,7 +135,7 @@ export default function BookmarkList() {
             <div className="gap-10 grid grid-cols-3 px-20 pt-5">
                 {posts && posts.map((bookmark, index) => (
                     <div
-                        className="border border-slate-200 shadow-sm h-56 rounded-md p-7 bg-slate-50"
+                        className="border border-slate-200 shadow-sm rounded-md p-7 bg-slate-50"
                         key={index}
                     >
                         <div className="flex justify-between">
@@ -172,26 +170,22 @@ export default function BookmarkList() {
                     </div>
                 ))}
             </div>
-            {/* Pagination Controls */}
-            <div className="flex justify-center mt-5 space-x-2">
-                <button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={!prevPage}
-                    className={`px-4 py-2 ${prevPage ? "bg-orange-500 hover:bg-orange-700" : "bg-gray-300"
-                        } text-white rounded`}
-                >
-                    Previous
-                </button>
-
-
-                <button
-                    onClick={() => setCurrentPage((prev) => prev + 1)}
-                    disabled={!nextPage}
-                    className={`px-4 py-2 ${nextPage ? "bg-orange-500 hover:bg-orange-700" : "bg-gray-300"
-                        } text-white rounded`}
-                >
-                    Next
-                </button>
+            {/* Infinite Scroll Trigger */}
+            <div className="gap-10 grid grid-cols-3 px-20 pt-5">
+                {hasMore && viewMode === "tiles" &&
+                    Array(3)
+                        .fill(0)
+                        .map((_, index) => <div ref={ref} key={index}>
+                            <SkeletonLoader /></div>
+                        )}
+            </div>
+            <div className="px-20 pt-5">
+                {hasMore && viewMode === "list" &&
+                    Array(1)
+                        .fill(0)
+                        .map((_, index) => <div ref={ref} key={index}>
+                            <SkeletonLoader /></div>
+                        )}
             </div>
         </div>
     );

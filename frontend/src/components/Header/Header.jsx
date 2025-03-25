@@ -48,7 +48,7 @@ export default function Header() {
           <ArrowLeftIcon className="h-7 w-7 mr-2" />
         </Link>
       )}
-      <p className="text-2xl font-bold">{title}</p>
+      <p className="ml-5 text-2xl">{title}</p>
 
       {/* SEARCH FUNCTION */}
       {!isExcluded ? (
@@ -56,7 +56,7 @@ export default function Header() {
           <input
             type="text"
             id="search"
-            className="p-2 text-sm text-gray-900 rounded-l-md focus:outline-none"
+            className="p-2 text-base text-gray-900 rounded-l-md"
             placeholder="Enter keywords ..."
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}

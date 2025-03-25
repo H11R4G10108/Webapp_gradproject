@@ -278,7 +278,7 @@ export default function PostList() {
               <SkeletonLoader /></div>
             )}
       </div>
-      <div className="px-20 pt-5">
+      <div className="px-20">
         {hasMore && viewMode === "list" &&
           Array(1)
             .fill(0)
