@@ -113,6 +113,7 @@ export default function SearchResult() {
                 <Header />
                 <div className="p-2">
                     <div>
+                        <h1 className="text-xl font-bold text-orange-500 mb-5">Search results for "{searchstring}"</h1>
                         {posts.length === 0 && (
                             <div className="flex justify-center items-center h-40">
                                 <p className="text-lg">No results found</p>

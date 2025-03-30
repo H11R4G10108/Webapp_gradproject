@@ -15,7 +15,7 @@ export default function UpdateEmail() {
         e.preventDefault();
         const formData = new FormData();
         formData.append("email", email);
-        const response = await api
+        await api
             .put("/change-user-infor/", formData)
             .then((response) => {
                 console.log(response);

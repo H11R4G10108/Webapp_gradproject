@@ -1,21 +1,20 @@
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
-export default function Sidebar2() {
-   
-  const currentLocation  = useLocation(); 
+export default function Sidebar2({isVisible, showSidebar}) {
+  const currentLocation = useLocation();
   const getActiveLink = () => {
-    const path = currentLocation .pathname;
-    if (path.includes ('/settings/account-information')) return 'Account Information';
+    const path = currentLocation.pathname;
+    if (path.includes('/settings/account-information')) return 'Account Information';
     if (path.includes('/settings/change-password')) return 'Change Password';
-    return ''; 
+    return '';
   };
-  const activeLink = getActiveLink(); 
+  const activeLink = getActiveLink();
   const linkClasses = (link) =>
     activeLink === link
       ? 'flex items-center text-orange-500 p-1'
       : 'flex items-center text-black hover:text-orange-500 p-1';
-    return (
-<div className="w-50 bg-slate-100 h-screen border-r-2 p-5">
+  return (
+    <div className=" bg-slate-100 h-screen border-r-2 p-3 sticky top-0">
       <div className="flex flex-col justify-center">
         <h1 className="text-xl font-bold p-2">Setting</h1>
       </div>
@@ -28,5 +27,5 @@ export default function Sidebar2() {
         </Link>
       </div>
     </div>
-    )
+  )
 }

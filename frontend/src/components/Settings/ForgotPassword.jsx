@@ -29,9 +29,6 @@ export default function ForgotPassword() {
                         showCloseButton: true,
                         showConfirmButton: false,
                     });
-                    // setTimeout(() => {
-                    //     window.location.reload(); // Reloads the page after success
-                    // }, 1500);
                 }
             })
             .catch((error) => {

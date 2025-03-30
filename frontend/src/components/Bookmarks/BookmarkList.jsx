@@ -11,6 +11,8 @@ import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import SkeletonLoader from "../SkeletonLoader/SkeletonLoader";
 import "./BookmarkList.css";
+const BASE_URL = import.meta.env.VITE_API_URL
+
 export default function BookmarkList() {
     const [loading, setLoading] = useState(false);
     const [posts, setPosts] = useState([]);
@@ -29,7 +31,7 @@ export default function BookmarkList() {
             setLoading(true);
             try {
                 const response = await api.get(
-                    `http://127.0.0.1:8000/api/bookmarks/?userid=${user_id}&page=${currentPage}`
+                    `${BASE_URL}/bookmarks/?userid=${user_id}&page=${currentPage}`
                 );
                 const newPosts = response.data.results;
                 setPosts((prevPosts) => {
@@ -58,7 +60,7 @@ export default function BookmarkList() {
 
     const toggleBookmark = async (postId) => {
         await api
-            .post(`http://127.0.0.1:8000/api/bookmark-toggle/${postId}/`)
+            .post(`${BASE_URL}/bookmark-toggle/${postId}/`)
             .then((response) => {
                 console.log(response);
                 if (response.status === 204) {
@@ -127,7 +129,7 @@ export default function BookmarkList() {
     })();
     return (
         <div id="no-scroll">
-            <div className="pt-2 flex justify-between items-center px-20">
+            <section className="pt-2 flex justify-between items-center px-20">
                 <div className="py-3">
                     <span className="text-gray-500 mr-2">Sort by</span>
                     <select
@@ -146,10 +148,10 @@ export default function BookmarkList() {
                         onClick={() => setViewMode("tiles")}><Squares2X2Icon className="h-7 w-7" /></button>
                     <button className={`border-2 rounded-tr-md p-1.5 transition ${viewMode === "list" ? "bg-gray-200" : "bg-white"}`} onClick={() => setViewMode("list")}><ListBulletIcon className="h-7 w-7" /></button>
                 </div>
-            </div>
+            </section>
 
             {/* List vỉew mode */}
-            <div className="flex flex-col gap-5 px-20 pt-5">
+            <section className="flex flex-col gap-5 px-20 pt-5">
                 {viewMode === "list" && sortedPosts && sortedPosts.map((posts, index) => (
                     <motion.article
                         key={index}
@@ -181,11 +183,11 @@ export default function BookmarkList() {
                         </div>
                     </motion.article>
                 ))}
-            </div>
+            </section>
             {/* Tiles view mode  */}
-            <div className="gap-10 grid grid-cols-3 px-20 ">
+            <section className="gap-10 grid grid-cols-3 px-20 ">
                 {viewMode === "tiles" && sortedPosts && sortedPosts.map((posts, index) => (
-                    <motion.div
+                    <motion.article
                         key={index}
                         variants={postVariants}
                         initial="hidden"
@@ -213,9 +215,9 @@ export default function BookmarkList() {
                         <Link to={`/post/${posts.post.postid}`} className="text-blue-500 hover:underline ml-1">
                             See full post →
                         </Link>
-                    </motion.div>
+                    </motion.article>
                 ))}
-            </div>
+            </section>
 
             {/* Infinite Scroll Trigger */}
             {loading ? (

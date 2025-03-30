@@ -21,7 +21,7 @@ export default function ChangePassword() {
         const formData = new FormData();
         formData.append("old_password", oldpassword);
         formData.append("new_password", password);
-        const response = await api
+        await api
             .put("/change-password/", formData)
             .then((response) => {
                 console.log(response);
@@ -72,7 +72,7 @@ export default function ChangePassword() {
         <div className="flex ">
             <Sidebar />
             <Sidebar2 />
-            <div className='flex flex-col w-full'>
+            <div className='flex flex-col'>
                 <Header />
                 <div className="flex justify-center items-center bg-slate-100">
                 </div>

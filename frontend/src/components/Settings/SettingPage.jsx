@@ -3,10 +3,10 @@ import Sidebar2 from "./Sidebar2";
 import Header from "../Header/Header";
 import { useState } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import { useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
+const BASE_URL = import.meta.env.VITE_API_URL
 
 export default function SettingPage() {
     const { user } = useContext(AuthContext);
@@ -18,7 +18,7 @@ export default function SettingPage() {
         const fetchUser = async () => {
             setLoading(true);
             const response = await axios.get(
-                "http://127.0.0.1:8000/api/users/" + user_id
+                `${BASE_URL}/users/${user_id}`
             );
             setUser(response.data);
             setLoading(false);
@@ -61,7 +61,7 @@ export default function SettingPage() {
         <div className="flex ">
             <Sidebar />
             <Sidebar2 />
-            <div className='flex flex-col w-full'>
+            <div className='flex flex-col'>
                 <Header />
                 <div className="flex justify-center items-center bg-slate-100">
                 </div>

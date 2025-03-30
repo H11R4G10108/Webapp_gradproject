@@ -2,37 +2,27 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useState } from "react";
 import useAxios from "../../utils/useAxios";
 import Swal from "sweetalert2";
-import { jwtDecode } from "jwt-decode";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
 
 export default function PasswordReset() {
     const { token } = useParams()
     const api = useAxios();
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState("");
-    const [ShowMessage, setShowMessage] = useState(false)
     const [password2, setPassword2] = useState("");
     const navigate = useNavigate();
-    const [authTokens, setAuthTokens] = useState(() =>
-        localStorage.getItem("authTokens")
-            ? JSON.parse(localStorage.getItem("authTokens"))
-            : null
-    );
-
-    const [user, setUser] = useState(() =>
-        localStorage.getItem("authTokens")
-            ? jwtDecode(localStorage.getItem("authTokens"))
-            : null
-    );
+    const { user, setUser } = useContext(AuthContext);
+    const { authTokens, setAuthTokens } = useContext(AuthContext);
 
     const submitHandler = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append("password", password);
         formData.append("token", token);
-        const response = await api
+        await api
             .post("/password_reset/confirm/", formData)
             .then((response) => {
-                setShowMessage(true)
                 console.log(response);
                 if (response.status === 200) {
                     console.log("Your password reset was successfull, you will be directed to the login page in a second");
@@ -96,7 +86,6 @@ export default function PasswordReset() {
                         maxLength="100"
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    {/* <p className="text-red-500 text-sm mt-2">{errors.email}</p> */}
                 </div>
                 <div className="flex flex-col">
                     <p className="font-medium text-slate-700 pb-1">Confirm password</p>

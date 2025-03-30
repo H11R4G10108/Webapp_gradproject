@@ -15,7 +15,7 @@ export default function UpdateUsername() {
         e.preventDefault();
         const formData = new FormData();
         formData.append("username", username);
-        const response = await api
+        await api
             .put("/change-user-infor/", formData)
             .then((response) => {
                 console.log(response);

@@ -6,6 +6,7 @@ import Header from '../Header/Header'
 import { SparklesIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 
+const BASE_URL = import.meta.env.VITE_API_URL
 export default function PostDetail() {
     const [post, setPosts] = useState([]);
     const { id } = useParams();
@@ -16,7 +17,7 @@ export default function PostDetail() {
             setLoading(true);
             try {
                 const response = await axios.get(
-                    "http://127.0.0.1:8000/api/post-detail/" + id
+                    `${BASE_URL}/post-detail/${id}/`
                 );
                 setPosts(response.data);
                 setLoading(false);
@@ -106,8 +107,6 @@ export default function PostDetail() {
                             Maecenas sit amet neque blandit, facilisis est
                             eu, efficitur dolor. Vivamus tempor ultricies
                             tincidunt. Morbi nec maximus est.
-
-
                         </p>
                     </div>
                     <button className="flex items-center bg-slate-100 border border-black px-4 py-2 rounded-lg mt-auto hover:bg-gray-200">

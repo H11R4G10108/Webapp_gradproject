@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useInView } from "react-intersection-observer";
@@ -6,13 +6,14 @@ import useAxios from "../../utils/useAxios";
 import Swal from "sweetalert2";
 import { BookmarkIcon as BookmarkOutline } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkSolid } from "@heroicons/react/24/solid";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import SkeletonLoader from "../SkeletonLoader/SkeletonLoader";
+
+const BASE_URL = import.meta.env.VITE_API_URL
 
 export default function PostList() {
   const { user } = useContext(AuthContext);
@@ -28,41 +29,36 @@ export default function PostList() {
   const user_id = user ? user.user_id : null;
   const [viewMode, setViewMode] = useState("tiles");
 
+  const loadPosts = useCallback(async () => {
+    if (!hasMore) return;
+    setLoading(true);
+  
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/posts/?page=${currentPage}`
+      );
+  
+      setPosts((prevPosts) => {
+        const allPosts = [...prevPosts, ...response.data.results];
+        return Array.from(new Map(allPosts.map((post) => [post.postid, post])).values());
+      });
+  
+      setHasMore(!!response.data.next);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      setErrors("Failed to load posts.");
+    }
+  
+    setLoading(false);
+  }, [currentPage, hasMore]);
+
   useEffect(() => {
-    const loadPosts = async () => {
-      if (!hasMore) return;
-      setLoading(true);
-
-      try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/posts/?page=${currentPage}`
-        );
-
-        // Convert array to a Set to remove duplicates
-        const newPosts = response.data.results;
-        setPosts((prevPosts) => {
-          const allPosts = [...prevPosts, ...newPosts];
-          // Remove duplicates using a Map
-          const uniquePosts = Array.from(new Map(allPosts.map(post => [post.postid, post])).values());
-          return uniquePosts;
-        });
-
-        setHasMore(!!response.data.next);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-        setErrors("Failed to load posts.");
-      }
-
-      setLoading(false);
-    };
-
     loadPosts();
-  }, [currentPage]);
-
+  }, [loadPosts]);
 
   useEffect(() => {
     if (inView && hasMore) {
-      setCurrentPage((prev) => prev + 1);
+      setCurrentPage((prev) => (hasMore ? prev + 1 : prev));
     }
   }, [inView, hasMore]);
 
@@ -71,17 +67,14 @@ export default function PostList() {
     const loadBookmarkedPosts = async () => {
       try {
         const response = await api.get(
-          `http://127.0.0.1:8000/api/bookmark-for-check/?userid=${user_id}`
+          (`${BASE_URL}/bookmark-for-check/?userid=${user_id}`)
         );
-
-        console.log("API Response:", response.data);
         const bookmarkData = response.data || [];
         const bookmarkedIds = new Set(
           bookmarkData
             .filter((item) => item.post) // Ensure item.post exists
             .map((item) => item.post.postid) // Extract postid
         );
-        console.log("Extracted Bookmarked IDs:", bookmarkedIds);
         setBookmarkedPosts(bookmarkedIds);
       } catch (error) {
         console.error("Error fetching bookmarks:", error);
@@ -91,7 +84,7 @@ export default function PostList() {
     if (user_id) {
       loadBookmarkedPosts();
     }
-  }, [user_id]);
+  }, [user_id, api]);
 
   // Toggle bookmark
   const toggleBookmark = async (postId) => {
@@ -143,11 +136,15 @@ export default function PostList() {
   };
 
   // Sort posts
-  const sortedPosts = [...posts].sort((a, b) => {
-    if (sortOption === "latest") return new Date(b.p_date) - new Date(a.p_date);
-    if (sortOption === "oldest") return new Date(a.p_date) - new Date(b.p_date);
-    return 0;
-  });
+  const getSortedPosts = (posts, option) => {
+    return [...posts].sort((a, b) => {
+      if (option === "latest") return new Date(b.p_date) - new Date(a.p_date);
+      if (option === "oldest") return new Date(a.p_date) - new Date(b.p_date);
+      return 0;
+    });
+  };
+
+  const sortedPosts = getSortedPosts(posts, sortOption);
 
   const postVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -156,7 +153,10 @@ export default function PostList() {
   return (
     <>
       <div>
-          <div className="pt-2 flex justify-between items-center px-20">
+          <section className="pt-2 flex flex-col md:px-20
+          md:flex-row md:justify-between md:items-center
+          lg:flex-row lg:justify-between lg:items-center
+          xl:flex-row xl:justify-between xl:items-center">
             <div className="py-3">
               <span className="text-gray-500 mr-2">Sort by</span>
               <select
@@ -168,17 +168,18 @@ export default function PostList() {
                 <option value="oldest">Oldest articles</option>
               </select>
             </div>
-            <div className="flex ">
+            <div className="hidden
+            md:flex lg:flex xl:flex">
               <button className={`border-l-2 rounded-tl-md p-1.5 transition ${viewMode === "tiles" ? "bg-gray-200" : "bg-white"}`}
               onClick={() => setViewMode("tiles")}><Squares2X2Icon className="h-7 w-7" /></button>
               <button className={`border-2 rounded-tr-md p-1.5 transition ${viewMode === "list" ? "bg-gray-200" : "bg-white"}`} onClick={() => setViewMode("list")}><ListBulletIcon className="h-7 w-7" /></button>
             </div>
-          </div>
+          </section>
         {/* List vỉew mode */}
-        <div className="flex flex-col gap-5 px-20 pt-5">
-          {viewMode === "list" && sortedPosts && sortedPosts.map((post, index) => (
+        <section className="flex flex-col gap-5 px-20 pt-5">
+          {viewMode === "list" && sortedPosts && sortedPosts.map((post) => (
             <motion.article
-            key={index}
+            key={post.postid}
             variants={postVariants}
             initial="hidden"
             animate="visible"
@@ -211,12 +212,16 @@ export default function PostList() {
               </div>
               </motion.article>
           ))}
-        </div>
+        </section>
         {/* Tiles view mode  */}
-        <div className="gap-10 grid grid-cols-3 px-20 ">
-          {viewMode === "tiles" && sortedPosts && sortedPosts.map((post, index) => (
+        <section className="gap-2 grid grid-cols-1 px-2 mr-9
+        md:grid-cols-2 md:px-20 md:gap-10
+        lg:grid-cols-3
+        xl:grid-cols-3
+        ">
+          {viewMode === "tiles" && sortedPosts && sortedPosts.map((post) => (
             <motion.div
-            key={index}
+            key={post.postid}
             variants={postVariants}
             initial="hidden"
             animate="visible"
@@ -249,7 +254,7 @@ export default function PostList() {
               </Link>
               </motion.div>
           ))}
-        </div>
+        </section>
       </div>
       {/* Infinite Scroll Trigger */}
       <div className="gap-10 grid grid-cols-3 px-20 pt-5">
@@ -268,7 +273,6 @@ export default function PostList() {
               <SkeletonLoader /></div>
             )}
       </div>
-      <hr className="bg-white"></hr>
     </>
   );
 }
