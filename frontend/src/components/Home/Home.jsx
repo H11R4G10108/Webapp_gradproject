@@ -3,7 +3,6 @@ import Header from '../Header/Header'
 import PostList from './PostList'
 
 export default function Home() {
-
     return (
         <div className="flex ">
             <Sidebar />

@@ -2,7 +2,6 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useState } from "react";
 import useAxios from "../../utils/useAxios";
 import Swal from "sweetalert2";
-import MyMessage from './Message'
 import { jwtDecode } from "jwt-decode";
 
 export default function PasswordReset() {

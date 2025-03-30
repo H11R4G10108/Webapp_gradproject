@@ -13,7 +13,7 @@ export default function Header() {
   const getTitle = () => {
     const path = location.pathname;
     if (path === "/") return "Home";
-    if (path.includes("/reply-bot")) return "Reply bot";
+    if (path.includes("/scraper-bot")) return "Scraper bot";
     if (path.includes("/bookmarks")) return "Bookmarks";
     if (path.includes("/settings/account-information")) return "Account Information";
     if (path.includes("/settings/change-password")) return "Change Password";
@@ -25,12 +25,8 @@ export default function Header() {
   const title = getTitle();
   const [searchString, setSearchString] = useState("");
 
-  const token = localStorage.getItem("authTokens");
-  if (token) {
-    jwtDecode(token);
-  }
 
-  const excludedPaths = ["/settings/change-password", "/reply-bot", "/settings/account-information"];
+  const excludedPaths = ["/settings/change-password", "/scraper-bot", "/settings/account-information"];
   const isExcluded = excludedPaths.includes(location.pathname) || matchPath("/post/:id", location.pathname);
   const isDetail = matchPath("/post/:id", location.pathname);
 
@@ -42,7 +38,7 @@ export default function Header() {
   };
 
   return (
-    <div className="flex flex-row justify-between sticky top-0 bg-slate-100 p-3 border-b-2 h-16 align-center">
+    <div className="flex flex-row justify-between sticky top-0 bg-slate-100 p-3 border-b-2 items-center">
       {isDetail && (
         <Link to="/" className="text-black">
           <ArrowLeftIcon className="h-7 w-7 mr-2" />

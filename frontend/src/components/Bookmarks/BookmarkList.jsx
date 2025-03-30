@@ -1,34 +1,45 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import useAxios from "../../utils/useAxios";
 import { BookmarkSlashIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
-import { useRef } from "react";
-
+import { useInView } from "react-intersection-observer";
+import "react-loading-skeleton/dist/skeleton.css";
+import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
+import SkeletonLoader from "../SkeletonLoader/SkeletonLoader";
+import "./BookmarkList.css";
 export default function BookmarkList() {
     const [loading, setLoading] = useState(false);
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [nextPage, setNextPage] = useState(null);
-    const [prevPage, setPrevPage] = useState(null);
+    const [hasMore, setHasMore] = useState(true);
     const [error, setErrors] = useState("");
-    const [sortOption, setSortOption] = useState("desc");
+    const [sortOption, setSortOption] = useState("latest");
     const api = useAxios();
     const { user } = useContext(AuthContext);
+    const { ref, inView } = useInView({ threshold: 1 });
+    const [viewMode, setViewMode] = useState("tiles");
     const user_id = user ? user.user_id : null;
     useEffect(() => {
         const loadPosts = async () => {
+            if (!hasMore) return;
             setLoading(true);
             try {
                 const response = await api.get(
-                    `http://127.0.0.1:8000/api/bookmarks/?userid=${user_id}&page=${currentPage}&sort=${sortOption}`
+                    `http://127.0.0.1:8000/api/bookmarks/?userid=${user_id}&page=${currentPage}`
                 );
-                setPosts(response.data.results || []);
-                console.log(response.data);
+                const newPosts = response.data.results;
+                setPosts((prevPosts) => {
+                    const allPosts = [...prevPosts, ...newPosts];
+                    // Remove duplicates using a Map
+                    const uniquePosts = Array.from(new Map(allPosts.map(bookmark => [bookmark.post.postid, bookmark])).values());
+                    console.log("Posts:", uniquePosts);
+                    return uniquePosts;
+                });
+                setHasMore(!!response.data.next); // Check if there are more pages
             } catch (error) {
                 console.error("Error fetching posts:", error);
                 setErrors("Failed to load posts.");
@@ -37,10 +48,16 @@ export default function BookmarkList() {
         };
 
         loadPosts();
-    }, [user_id, currentPage, sortOption]);
+    }, [user_id, currentPage]);
+
+    useEffect(() => {
+        if (inView && hasMore) {
+            setCurrentPage((prev) => prev + 1);
+        }
+    }, [inView, hasMore]);
 
     const toggleBookmark = async (postId) => {
-        const response = await api
+        await api
             .post(`http://127.0.0.1:8000/api/bookmark-toggle/${postId}/`)
             .then((response) => {
                 console.log(response);
@@ -67,7 +84,6 @@ export default function BookmarkList() {
                     console.log("Error response:", error.response);
                     console.log("Error data:", error.response.data);
                     console.log("Error status:", error.response.status);
-                    console.log("Error headers:", error.response.headers);
                 } else if (error.request) {
                     console.log("Error request:", error.request);
                 } else {
@@ -87,106 +103,140 @@ export default function BookmarkList() {
             });
     };
 
-    if (loading) return (
-        <div
-            id="loading-overlay"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60 bg-slate-100"
-        >
-            <svg
-                className="animate-spin h-5 w-5 text-black mr-3"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-            >
-                <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                ></circle>
-                <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-            </svg>
-            <span className="text-black text-xl">Loading...</span>
-        </div>
-    );
+    if (error) return <p className="text-center mt-10">{error}</p>;
 
-    if (error) return <p>{error}</p>;
+    const sortedPosts = [...posts].sort((a, b) => {
+        if (sortOption === "latest") return new Date(b.post.p_date) - new Date(a.post.p_date);
+        if (sortOption === "oldest") return new Date(a.post.p_date) - new Date(b.post.p_date);
+        return 0;
+    });
+    const postVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    };
+    (function () {
+        function onReady() {
+            document.body.classList.remove('no-scroll');
+        }
 
+        if (document.readyState === 'complete') {
+            setTimeout(onReady, 1000);
+        } else {
+            document.addEventListener('DOMContentLoaded', onReady);
+        }
+    })();
     return (
-        <div>
-            <div className="flex items-center px-20 pt-5">
-                <span className="text-gray-500 mr-2">Sort by</span>
-                <select
-                    value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
-                    className="border px-3 py-1 rounded-md"
-                >
-                    <option value="desc">Newest First</option>
-                    <option value="asc">Oldest First</option>
-                </select>
+        <div id="no-scroll">
+            <div className="pt-2 flex justify-between items-center px-20">
+                <div className="py-3">
+                    <span className="text-gray-500 mr-2">Sort by</span>
+                    <select
+                        onChange={(e => {
+                            setSortOption(e.target.value);
+                        })}
+                        className="border px-3 py-1 rounded-md"
+                        value={sortOption}
+                    >
+                        <option value="latest">Latest articles</option>
+                        <option value="oldest">Oldest articles</option>
+                    </select>
+                </div>
+                <div className="flex ">
+                    <button className={`border-l-2 rounded-tl-md p-1.5 transition ${viewMode === "tiles" ? "bg-gray-200" : "bg-white"}`}
+                        onClick={() => setViewMode("tiles")}><Squares2X2Icon className="h-7 w-7" /></button>
+                    <button className={`border-2 rounded-tr-md p-1.5 transition ${viewMode === "list" ? "bg-gray-200" : "bg-white"}`} onClick={() => setViewMode("list")}><ListBulletIcon className="h-7 w-7" /></button>
+                </div>
             </div>
 
-            <div className="gap-10 grid grid-cols-3 px-20 pt-5">
-                {posts && posts.map((bookmark, index) => (
-                    <div
-                        className="border border-slate-200 shadow-sm rounded-md p-7 bg-slate-50"
+            {/* List vỉew mode */}
+            <div className="flex flex-col gap-5 px-20 pt-5">
+                {viewMode === "list" && sortedPosts && sortedPosts.map((posts, index) => (
+                    <motion.article
                         key={index}
+                        variants={postVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="border-y border-slate-200 shadow-sm rounded-md p-1 w-full max-w-full"
                     >
-                        <div className="flex justify-between">
-                            <p className="text-sm p-2 font-bold">{new Date(bookmark.post.p_date).toLocaleTimeString()}{" "}
-                                {new Date(bookmark.post.p_date).toLocaleDateString("en-GB", {
+                        <div className="flex p-2 justify-between">
+                            <p className="text-xs font-bold">
+                                {new Date(posts.post.p_date).toLocaleTimeString()}{" "}
+                                {new Date(posts.post.p_date).toLocaleDateString("en-GB", {
                                     day: "2-digit",
                                     month: "2-digit",
                                     year: "numeric",
                                 })}
                             </p>
-                            {/* Unbookmark Button */}
-                            <button
-                                onClick={() => toggleBookmark(bookmark.post.postid)}
-                            >
-                                <BookmarkSlashIcon className="h-5 w-5 mr-2  hover:text-orange-500" />
+                            <button onClick={() => toggleBookmark(posts.post.postid)}>
+                                <BookmarkSlashIcon className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <div className="p-2 flex flex-row justify-between">
+                            <h2 className="mb-1 text-xm">
+                                {posts.post.content}
+                            </h2>
+                            <Link to={`/post/${posts.post.postid}`} className="text-blue-500 hover:underline">
+                                See full post →
+                            </Link>
+                        </div>
+                    </motion.article>
+                ))}
+            </div>
+            {/* Tiles view mode  */}
+            <div className="gap-10 grid grid-cols-3 px-20 ">
+                {viewMode === "tiles" && sortedPosts && sortedPosts.map((posts, index) => (
+                    <motion.div
+                        key={index}
+                        variants={postVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="border border-slate-200 shadow-sm rounded-md p-3 bg-slate-50 w-full max-w-full"
+                    >
+                        <div className="flex p-2 justify-between">
+                            <p className="text-sm font-bold">
+                                {new Date(posts.post.p_date).toLocaleTimeString()}{" "}
+                                {new Date(posts.post.p_date).toLocaleDateString("en-GB", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                })}
+                            </p>
+                            <button onClick={() => toggleBookmark(posts.post.postid)}>
+                                <BookmarkSlashIcon className="h-5 w-5" />
                             </button>
                         </div>
                         <div className="p-2 leading-5">
                             <h2 className="mb-1 text-xm">
-                                {bookmark.post.content.length > 50 ? (
-                                    <>
-                                        {bookmark.post.content.substring(0, 55)}...
-                                    </>
-                                ) : (
-                                    bookmark.post.content
-                                )}
+                                {posts.post.content.length > 50 ? `${posts.post.content.substring(0, 55)}...` : posts.post.content}
                             </h2>
                         </div>
-                        <Link to={`/post/${bookmark.post.postid}`} className="text-blue-500 hover:underline ml-1">
+                        <Link to={`/post/${posts.post.postid}`} className="text-blue-500 hover:underline ml-1">
                             See full post →
                         </Link>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
+
             {/* Infinite Scroll Trigger */}
-            <div className="gap-10 grid grid-cols-3 px-20 pt-5">
-                {hasMore && viewMode === "tiles" &&
-                    Array(3)
-                        .fill(0)
-                        .map((_, index) => <div ref={ref} key={index}>
-                            <SkeletonLoader /></div>
-                        )}
-            </div>
-            <div className="px-20 pt-5">
-                {hasMore && viewMode === "list" &&
-                    Array(1)
-                        .fill(0)
-                        .map((_, index) => <div ref={ref} key={index}>
-                            <SkeletonLoader /></div>
-                        )}
-            </div>
+            {loading ? (
+                <div>
+                    <div className="gap-10 grid grid-cols-3 px-20 pt-5">
+                        {hasMore && viewMode === "tiles" &&
+                            Array(3)
+                                .fill(0)
+                                .map((_, index) => <div ref={ref} key={index}>
+                                    <SkeletonLoader /></div>
+                                )}
+                    </div>
+                    <div className="px-20">
+                        {hasMore && viewMode === "list" &&
+                            Array(1)
+                                .fill(0)
+                                .map((_, index) => <div ref={ref} key={index}>
+                                    <SkeletonLoader /></div>
+                                )}
+                    </div>
+                    </div>) : null}
         </div>
     );
 }

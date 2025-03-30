@@ -11,6 +11,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
+import SkeletonLoader from "../SkeletonLoader/SkeletonLoader";
 
 export default function PostList() {
   const { user } = useContext(AuthContext);
@@ -147,26 +149,12 @@ export default function PostList() {
     return 0;
   });
 
-  // Skeleton Loader
-  const SkeletonLoader = () => {
-    return (
-      <div className="border border-gray-200 shadow-sm w-full rounded-md p-5 bg-gray-100">
-        <div className="flex justify-between p-2">
-          <Skeleton width={80} height={16} />
-          <Skeleton width={24} height={24} circle />
-        </div>
-        <div className="p-2 space-y-2">
-          <Skeleton height={20} width="70%" />
-          <Skeleton height={20} width="100%" />
-          <Skeleton height={20} width="85%" />
-        </div>
-        <Skeleton height={14} width={120} />
-      </div>
-    );
+  const postVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
   };
-
   return (
-    <div>
+    <>
       <div>
           <div className="pt-2 flex justify-between items-center px-20">
             <div className="py-3">
@@ -185,26 +173,17 @@ export default function PostList() {
               onClick={() => setViewMode("tiles")}><Squares2X2Icon className="h-7 w-7" /></button>
               <button className={`border-2 rounded-tr-md p-1.5 transition ${viewMode === "list" ? "bg-gray-200" : "bg-white"}`} onClick={() => setViewMode("list")}><ListBulletIcon className="h-7 w-7" /></button>
             </div>
-            <div className="ml-3.5 hidden">
-              <span className="text-gray-500 mr-2">View</span>
-              <select
-                value={viewMode}
-                onChange={(e) => setViewMode(e.target.value)}
-                className="border px-3 py-1 rounded-md">
-                <option value="tiles" > Tiles</option>
-                <option value="content">Content</option>
-                <option value="list">List</option>
-                <option value="detail">Detail</option>
-              </select>
-            </div>
           </div>
         {/* List vỉew mode */}
         <div className="flex flex-col gap-5 px-20 pt-5">
           {viewMode === "list" && sortedPosts && sortedPosts.map((post, index) => (
-            <div
-              className="border border-slate-200 shadow-sm rounded-md p-7 bg-slate-50 w-full max-w-full"
-              key={index}
-            >
+            <motion.article
+            key={index}
+            variants={postVariants}
+            initial="hidden"
+            animate="visible"
+            className="border-y border-slate-200 shadow-sm rounded-md p-1 w-full max-w-full"
+          >
               <div className="flex p-2 justify-between">
                 <p className="text-sm font-bold">
                   {new Date(post.p_date).toLocaleTimeString()}{" "}
@@ -222,24 +201,27 @@ export default function PostList() {
                   )}
                 </button>
               </div>
-              <div className="p-2 leading-5">
+              <div className="p-2 flex flex-row justify-between">
                 <h2 className="mb-1 text-xm">
                   {post.content}
                 </h2>
-              </div>
               <Link to={`/post/${post.postid}`} className="text-blue-500 hover:underline ml-1">
                 See full post →
               </Link>
-            </div>
+              </div>
+              </motion.article>
           ))}
         </div>
         {/* Tiles view mode  */}
         <div className="gap-10 grid grid-cols-3 px-20 ">
           {viewMode === "tiles" && sortedPosts && sortedPosts.map((post, index) => (
-            <div
-              className="border border-slate-200 shadow-sm rounded-md p-7 bg-slate-50"
-              key={index}
-            >
+            <motion.div
+            key={index}
+            variants={postVariants}
+            initial="hidden"
+            animate="visible"
+            className="border border-slate-200 shadow-sm rounded-md p-3 bg-slate-50 w-full max-w-full"
+          >
               <div className="flex p-2 justify-between">
                 <p className="text-sm font-bold">
                   {new Date(post.p_date).toLocaleTimeString()}{" "}
@@ -265,7 +247,7 @@ export default function PostList() {
               <Link to={`/post/${post.postid}`} className="text-blue-500 hover:underline ml-1">
                 See full post →
               </Link>
-            </div>
+              </motion.div>
           ))}
         </div>
       </div>
@@ -286,6 +268,7 @@ export default function PostList() {
               <SkeletonLoader /></div>
             )}
       </div>
-    </div>
+      <hr className="bg-white"></hr>
+    </>
   );
 }

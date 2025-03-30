@@ -1,8 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import useAxios from "../../utils/useAxios";
 import Swal from "sweetalert2";
-import MyMessage from './Message'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import {Link} from "react-router-dom";
 

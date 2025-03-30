@@ -1,6 +1,6 @@
 import Sidebar from '../Sidebar/Sidebar'
 import Header from '../Header/Header'
-export default function Replybot() {
+export default function ScraperBot() {
 
     return (
         <div className="flex ">

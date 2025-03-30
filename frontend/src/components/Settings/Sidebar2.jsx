@@ -15,9 +15,9 @@ export default function Sidebar2() {
       ? 'flex items-center text-orange-500 p-1'
       : 'flex items-center text-black hover:text-orange-500 p-1';
     return (
-<div className="w-80 bg-slate-100 h-screen border-r-2 p-5">
-      <div className="flex flex-col justify-center h-16">
-        <h1 className="text-3xl font-bold p-2">Setting</h1>
+<div className="w-50 bg-slate-100 h-screen border-r-2 p-5">
+      <div className="flex flex-col justify-center">
+        <h1 className="text-xl font-bold p-2">Setting</h1>
       </div>
       <div className="flex flex-col p-2 gap-4">
         <Link to="/settings/account-information" className={linkClasses('Account Information')}>
