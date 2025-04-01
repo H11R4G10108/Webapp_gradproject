@@ -174,9 +174,13 @@ export default function BookmarkList() {
                             </button>
                         </div>
                         <div className="p-2 flex flex-row justify-between">
-                            <h2 className="mb-1 text-xm">
-                                {posts.post.content}
-                            </h2>
+                            <div>
+                                <h2 className="mb-1 text-xm">
+                                    {posts.post.content}
+                                </h2>
+                                <p className="text-sm">Author: Albert Robert</p>
+                                <p className="text-sm">Group: Science Time on Facebook</p>
+                            </div>
                             <Link to={`/post/${posts.post.postid}`} className="text-blue-500 hover:underline">
                                 See full post →
                             </Link>
@@ -185,7 +189,10 @@ export default function BookmarkList() {
                 ))}
             </section>
             {/* Tiles view mode  */}
-            <section className="gap-10 grid grid-cols-3 px-20 ">
+            <section className="gap-2 grid grid-cols-1 px-2
+                md:grid-cols-2 md:px-20 md:gap-10
+        lg:grid-cols-3
+        xl:grid-cols-3">
                 {viewMode === "tiles" && sortedPosts && sortedPosts.map((posts, index) => (
                     <motion.article
                         key={index}
@@ -238,7 +245,7 @@ export default function BookmarkList() {
                                     <SkeletonLoader /></div>
                                 )}
                     </div>
-                    </div>) : null}
+                </div>) : null}
         </div>
     );
 }

@@ -14,7 +14,7 @@ export default function Sidebar2({isVisible, showSidebar}) {
       ? 'flex items-center text-orange-500 p-1'
       : 'flex items-center text-black hover:text-orange-500 p-1';
   return (
-    <div className=" bg-slate-100 h-screen border-r-2 p-3 sticky top-0">
+    <div className=" bg-slate-100 w-25 h-screen border-r-2 p-3 sticky top-0">
       <div className="flex flex-col justify-center">
         <h1 className="text-xl font-bold p-2">Setting</h1>
       </div>

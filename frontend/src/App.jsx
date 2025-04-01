@@ -1,7 +1,7 @@
 import './App.css'
 import Login from "./components/Login/Login";
 import Home from "./components/Home/Home";
-import ScraperBot from "./components/ScraperBot/ScraperBot.jsx";
+import CrawlBot from "./components/CrawlBot/CrawlBot.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { Routes, Route } from 'react-router-dom'
 import PrivateRoute from "./utils/PrivateRoute.jsx";
@@ -49,10 +49,10 @@ function App() {
           }
         />
         <Route
-          path="/scraper-bot"
+          path="/crawl-bot"
           element={
             <PrivateRoute>
-              <ScraperBot />
+              <CrawlBot />
             </PrivateRoute>
           }
         />

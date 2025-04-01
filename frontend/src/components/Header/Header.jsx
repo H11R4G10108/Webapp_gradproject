@@ -27,7 +27,7 @@ export default function Header() {
   const [searchString, setSearchString] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
 
-  const excludedPaths = ["/settings/change-password", "/scraper-bot", "/settings/account-information"];
+  const excludedPaths = ["/settings/change-password", "/scraper-bot", "/settings/account-information", "/settings/account-information/change-username", "/settings/account-information/change-email"];
   const isExcluded = excludedPaths.includes(location.pathname) || matchPath("/post/:id", location.pathname);
   const isDetail = matchPath("/post/:id", location.pathname);
   const toggleSearchbar = () => {
@@ -41,7 +41,7 @@ export default function Header() {
   };
 
   return (
-    <header className="flex flex-row justify-between sticky top-0 bg-slate-100 md:p-3 p-2 border-b-2 items-center h-15">
+    <header className="w-full flex flex-row justify-between sticky top-0 bg-slate-100 md:p-3 p-2 border-b-2 items-center h-15">
       <div className="flex flex-row items-center justify-around gap-5">
         {isDetail && (
           <Link to="/" className="text-black">

@@ -66,7 +66,7 @@ export default function UpdateUsername() {
         <div className="flex ">
             <Sidebar />
             <Sidebar2 />
-            <div className='flex flex-col w-full'>
+            <div className='flex flex-col'>
                 <Header />
                 <form onSubmit={submitHandler} className="flex  w-full p-5 items-center  bg-slate-100">
                     <div className="flex flex-col  w-full gap-5">

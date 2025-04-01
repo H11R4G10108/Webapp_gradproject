@@ -63,8 +63,7 @@ export default function PostList() {
   }, [inView, hasMore]);
 
   // Fetch bookmarked posts
-  useEffect(() => {
-    const loadBookmarkedPosts = async () => {
+const loadBookmarkedPosts = async () => {
       try {
         const response = await api.get(
           (`${BASE_URL}/bookmark-for-check/?userid=${user_id}`)
@@ -81,10 +80,10 @@ export default function PostList() {
       }
     };
 
+  useEffect(() => {
     if (user_id) {
       loadBookmarkedPosts();
-    }
-  }, [user_id, api]);
+    }}, []);
 
   // Toggle bookmark
   const toggleBookmark = async (postId) => {
@@ -203,9 +202,13 @@ export default function PostList() {
                 </button>
               </div>
               <div className="p-2 flex flex-row justify-between">
+                <div>
                 <h2 className="mb-1 text-xm">
                   {post.content}
                 </h2>
+                <p className="text-sm">Author: Albert Robert</p>
+                <p className="text-sm">Group: Science Time on Facebook</p>
+                </div>
               <Link to={`/post/${post.postid}`} className="text-blue-500 hover:underline ml-1">
                 See full post →
               </Link>
@@ -214,7 +217,7 @@ export default function PostList() {
           ))}
         </section>
         {/* Tiles view mode  */}
-        <section className="gap-2 grid grid-cols-1 px-2 mr-9
+        <section className="gap-2 grid grid-cols-1 px-2
         md:grid-cols-2 md:px-20 md:gap-10
         lg:grid-cols-3
         xl:grid-cols-3

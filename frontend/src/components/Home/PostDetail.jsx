@@ -89,7 +89,7 @@ export default function PostDetail() {
                             </div>
                             </div>
                             </div>
-                    <div className=" w-2/3 bg-gray-100 p-5 rounded-lg">
+                    <div className=" w-2/3 bg-gray-100 p-5 rounded-lg hidden">
                     <div className="mb-5">
                         <button className="flex rounded-lg bg-gradient-to-r from-pink-400 to-blue-400 text-white px-4 py-2 hover:from-pink-500 hover:to-blue-500 transition-all duration-300">
                             <SparklesIcon className="h-5 w-5 mr-2" />
