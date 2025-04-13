@@ -1,5 +1,7 @@
-from .models import Post, Comment, UserBookmarkPost, User
-from .serializers import UserSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, PostSerializer, CommentSerializer, UserBookmarkPostSerializer, ChangeUserInfoSerializer
+import django_filters
+
+from .models import Post, UserBookmarkPost, User
+from .serializers import UserSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, PostSerializer, UserBookmarkPostSerializer, ChangeUserInfoSerializer
 from django.http import JsonResponse
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import api_view, permission_classes
@@ -13,6 +15,12 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework import filters
+from rest_framework import viewsets, filters
+from rest_framework.pagination import LimitOffsetPagination
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter, NumberFilter
+from .models import Post
+from .serializers import PostSerializer
+from django.db.models import Q
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -94,12 +102,35 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = LimitOffsetPagination
 
+
+# Create a custom FilterSet for Post model
+import django_filters
+from .models import Post
+
+class PostFilter(FilterSet):
+    price_min = NumberFilter(field_name='price', lookup_expr='gte')
+    price_max = NumberFilter(field_name='price', lookup_expr='lte')
+    district = CharFilter(method='filter_district')
+
+    def filter_district(self, queryset, name, value):
+        if not value:
+            return queryset
+        districts = [d.strip() for d in value.split(',')]
+        q = Q()
+        for d in districts:
+            q |= Q(district__icontains=d)
+        return queryset.filter(q)
+
+    class Meta:
+        model = Post
+        fields = ['district', 'price_min', 'price_max']
+
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-p_date')  # Most recent first by default
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
-    search_fields = ['content']
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PostFilter
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -119,9 +150,13 @@ class PostPagination(PageNumberPagination):
 
 # Create the API view
 class PostListView(ListAPIView):
-    queryset = Post.objects.all().order_by('-p_date')  # Order by most recent
+    queryset = Post.objects.all().order_by('-p_date')  # Most recent first by default
     serializer_class = PostSerializer
     pagination_class = PostPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PostFilter
+    search_fields = ['content', 'street_address', 'ward', 'district']
+
 
 
 class BookmarkListView(ListAPIView):

@@ -1,10 +1,9 @@
-from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from core import api_views
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordResetDoneView, PasswordResetCompleteView
-from core.api_views import UserProfileView, PostListView, BookmarkListView, ToggleBookmarkView, BookmarkListViewForMark
+from core.api_views import UserProfileView, PostListView, BookmarkListView, ToggleBookmarkView, BookmarkListViewForMark, PostViewSet
 
 router = DefaultRouter()
 router.register(r'users', api_views.UserViewSet)

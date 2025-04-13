@@ -2,7 +2,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Post, Comment, UserBookmarkPost, User
+from .models import Post, UserBookmarkPost, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -71,10 +71,6 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
 
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = '__all__'
 
 class UserBookmarkPostSerializer(serializers.ModelSerializer):
     post = PostSerializer(source='postid', read_only=True)  # Fetch related post details
