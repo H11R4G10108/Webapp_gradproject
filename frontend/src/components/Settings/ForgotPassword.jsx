@@ -61,9 +61,7 @@ export default function ForgotPassword() {
         <div className="flex items-center h-screen bg-slate-100">
             <div className="w-2/3 max-w-md mx-auto bg-slate-100 p-8 rounded-lg shadow-md">
             <div className="float-right"><Link to ="/" className=""><XMarkIcon className="h-6 w-6 text-gray-500" /></Link></div>
-                <h1 className="text-4xl font-bold text-orange-500 mt-5">Find your account</h1>
-                <p className="text-sm text-gray-500 mt-2">Enter the email associated with your account to change your password.
-                </p>
+                <h1 className="text-3xl font-bold text-orange-500 mt-5">Tìm tài khoản của bạn</h1>
                 <form onSubmit={submitHandler} className="mt-5">
                     <div className="flex flex-col">
                         <p className="font-medium text-slate-700 pb-1">Email</p>
@@ -85,7 +83,7 @@ export default function ForgotPassword() {
                         className="w-full p-2 mt-8 hover:bg-orange-300 rounded border text-xm bg-orange-500 text-white"
                         type="submit"
                     >
-                        Request Password Reset 
+                        Yêu cầu đổi mật khẩu 
                     </button>
                 </form>
             </div>

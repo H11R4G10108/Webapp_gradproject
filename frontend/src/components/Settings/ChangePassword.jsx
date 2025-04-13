@@ -5,6 +5,7 @@ import Header from "../Header/Header"
 import Sidebar2 from "./Sidebar2"
 import Swal from "sweetalert2";
 import { useState } from "react";
+import Navbar from "../Navbar/Navbar";
 
 export default function ChangePassword() {
     const api = useAxios();
@@ -28,7 +29,7 @@ export default function ChangePassword() {
                 if (response.status === 200) {
                     console.log("Changed successfully");
                     Swal.fire({
-                        title: "Changed Successfully",
+                        title: "Đổi mật khẩu thành công",
                         icon: "success",
                         toast: true,
                         timer: 3000,
@@ -56,8 +57,8 @@ export default function ChangePassword() {
                     console.log("Error message:", error.message);
                 }
                 Swal.fire({
-                    title: "There was an error",
-                    text: "Please try again",
+                    title: "Có lỗi xảy ra",
+                    text: "Vui lòng thử lại",
                     icon: "error",
                     toast: true,
                     timer: 6000,
@@ -69,23 +70,24 @@ export default function ChangePassword() {
             });
     };
     return (
-        <div className="flex ">
-            <Sidebar />
+        <>
+        <Navbar />
+        <div className="flex">
             <Sidebar2 />
             <div className='flex flex-col'>
                 <Header />
-                <div className="flex justify-center items-center bg-slate-100">
+                <div className="flex justify-center items-center">
                 </div>
-                <form onSubmit={submitHandler} className="flex p-5 items-center w-full bg-slate-100">
+                <form onSubmit={submitHandler} className="flex p-5 items-center w-full">
                     <div className="flex flex-col w-full gap-5">
                         <div className="flex flex-col mt-4">
-                            <label className="text-sm font-semibold">Current Password</label>
+                            <label className="text-sm font-semibold">Mật khẩu hiện tại</label>
                             <input type="password" className="border border-gray-300 rounded-lg p-2 mt-1"
                                 onChange={(e) => setOldPassword(e.target.value)}
                                 maxLength="128"
                                 onBlur={handleFocus}
                                 focused={focused.toString()}
-                                placeholder="Enter your current password"
+                                placeholder="Nhập mật khẩu hiện tại"
                             />
                             {errors.old_password && errors.old_password.length > 0 && (
                                 <div className="text-xs text-red-700 mt-3">
@@ -95,29 +97,31 @@ export default function ChangePassword() {
                                 </div>
                             )}
                             <a href="/forgot-password" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
-                                Forgot Password?
+                                Quên mật khẩu?
                             </a>
 
 
                         </div>
                         <div className="flex flex-col mt-4">
-                            <label className="text-sm font-semibold">New Password</label>
+                            <label className="text-sm font-semibold">Mật khẩu mới</label>
                             <input
                                 name="password"
                                 type="password" className="border border-gray-300 rounded-lg p-2 mt-1"
-                                placeholder="At least 8 characters"
+                                placeholder="Ít nhất 8 ký tự"
+                                required="True"
+                                pattern="^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$"
                                 maxLength="128"
                                 onChange={(e) => setPassword(e.target.value)}
                                 onBlur={handleFocus}
                                 focused={focused.toString()} />
                         </div>
                         <div className="flex flex-col mt-4">
-                            <label className="text-sm font-semibold">Confirm Password</label>
+                            <label className="text-sm font-semibold">Xác nhận mật khẩu</label>
                             <input
                                 maxLength="128"
                                 name="password2"
                                 type="password"
-                                placeholder="At least 8 characters"
+                                placeholder="Nhập lại mật khẩu để xác nhận"
                                 required="True"
                                 onChange={(e) => setPassword2(e.target.value)}
                                 onBlur={handleFocus}
@@ -125,7 +129,7 @@ export default function ChangePassword() {
                                 className="border border-gray-300 rounded-lg p-2 mt-1 w-full" />
                             {password !== password2 && password !== "" && password2 !== "" && (
                                 <span className="text-xs p-1 text-red-700">
-                                    Passwords don't match!
+                                    Mật khẩu không khớp! Vui lòng nhập lại.
                                 </span>
                             )}
                         </div>
@@ -142,6 +146,6 @@ export default function ChangePassword() {
                     </div>
                 </form>
             </div>
-        </div>
+        </div></>
     )
 }

@@ -17,7 +17,7 @@ export default function Login() {
       <div className="flex justify-center items-center h-screen bg-slate-100">
       <div className="w-2/3 max-w-md mx-auto bg-slate-100 p-8 rounded-lg shadow-md">
       
-          <h1 className="text-4xl font-bold mb-5 text-orange-500" id="typewriter">Welcome to FLICDex!</h1>
+          <h1 className="text-3xl font-bold mb-5 text-orange-500" id="typewriter">Trọ Đà Nẵng xin chào!</h1>
           <form onSubmit={submitHandler}>
             <div className="flex flex-col">
               <div className="flex flex-col gap-2">
@@ -36,7 +36,7 @@ export default function Login() {
                   /></div>
                 <div className="mt-5">
                   <p className="font-medium text-slate-700 pb-2"
-                  >Password</p>
+                  >Mật khẩu</p>
                   <input
                     type="password"
                     id="password"
@@ -49,8 +49,11 @@ export default function Login() {
                   />
                 </div>
               </div>
-              <a href="#" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
-                Forgot Password?
+              <a href="/forgot-password" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
+                Quên mật khẩu?
+              </a>
+              <a href="/register" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
+                Chưa có tài khoản?
               </a>
             </div>
             <button
@@ -58,7 +61,7 @@ export default function Login() {
               className="p-2 mt-5 w-full hover:bg-orange-300 rounded border text-xm bg-orange-500 text-white"
               type="submit"
             >
-              Sign in
+              Đăng nhập
             </button>
           </form>
         </div>

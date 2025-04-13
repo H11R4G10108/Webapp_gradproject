@@ -30,7 +30,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className={`md:block md:bg-slate-100 h-screen md:w-56 md:border-r-2 md:py-3 md:px-5 sticky top-0`}>
+      <div className={`md:bg-slate-100 h-screen md:w-56 lg:w-56 xl:w-56 md:border-r-2 md:py-3 md:px-5 sticky top-0`}>
         <div className="p-2 flex items-center justify-between gap-5">
           <h1 className='text-2xl font-bold text-orange-500 md:flex hidden'>RentDex</h1>
           <button onClick={toggleSidebar} className="md:hidden"> <Bars3BottomLeftIcon className="md-hidden w-6 text-orange-500 sticky top-0" /></button>
