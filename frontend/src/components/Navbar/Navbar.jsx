@@ -14,17 +14,6 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { AuthContext } from "../../context/AuthContext";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 export default function Navbar() {
   const { user, logoutUser } = useContext(AuthContext);
@@ -46,15 +35,93 @@ export default function Navbar() {
   return (
     <div className="bg-gray-50 shadow-sm sticky top-0 z-50 border-b-2">
       <div className="container mx-auto px-4 py-2 flex items-center justify-between">
-        {/* Logo or Brand */}
-        <div className="text-lg font-bold text-orange-500 hidden">
+        {/* Logo */}
+        <div className="text-lg font-bold text-orange-500">
           <Link to="/">Trọ Đà Nẵng</Link>
         </div>
 
-        {/* Navigation Items */}
-        <div className="ml-auto flex items-center space-x-4">
+        {/* Hamburger Menu for Mobile */}
+        <div className="md:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="p-2 text-gray-800 hover:text-orange-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="rounded-md shadow-lg p-2 bg-white">
+              {generalItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link
+                    to={item.href}
+                    className={`block px-4 py-2 text-sm rounded-md transition-colors ${
+                      location.pathname === item.href
+                        ? "text-orange-500 font-semibold"
+                        : "text-gray-800 hover:text-orange-500"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+              {user_id ? (
+                <>
+                  <DropdownMenuSeparator />
+                  {accountItems.map((item) => (
+                    <DropdownMenuItem key={item.name} asChild>
+                      <Link
+                        to={item.href}
+                        className={`block px-4 py-2 text-sm rounded-md transition-colors ${
+                          location.pathname === item.href
+                            ? "text-orange-500 font-semibold"
+                            : "text-gray-800 hover:text-orange-500"
+                        }`}
+                      >
+                        {item.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuItem asChild>
+                    <button
+                      onClick={logoutUser}
+                      className="block px-4 py-2 text-sm text-gray-800 hover:text-orange-500"
+                    >
+                      Đăng xuất
+                    </button>
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/login"
+                    className={`block px-4 py-2 text-sm rounded-md transition-colors ${
+                      location.pathname === "/login"
+                        ? "text-orange-500 font-semibold"
+                        : "text-gray-800 hover:text-orange-500"
+                    }`}
+                  >
+                    Đăng nhập
+                  </Link>
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Full Menu for Desktop */}
+        <div className="hidden md:flex ml-auto items-center">
           <NavigationMenu>
-            <NavigationMenuList className="flex space-x-4">
+            <NavigationMenuList>
               {generalItems.map((item) => (
                 <NavigationMenuItem key={item.name}>
                   <NavigationMenuLink asChild>
@@ -71,7 +138,6 @@ export default function Navbar() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
-
               {user_id ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger className="text-base font-semibold text-gray-800 hover:text-orange-500 transition-colors px-4 py-2">
@@ -93,38 +159,14 @@ export default function Navbar() {
                         </Link>
                       </DropdownMenuItem>
                     ))}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <div>
-                          <DropdownMenuItem
-                            onSelect={(e) => e.preventDefault()}
-                            className="px-2 py-1 text-sm text-gray-800 hover:text-orange-500 cursor-pointer"
-                          >
-                            Đăng xuất
-                          </DropdownMenuItem>
-                        </div>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Xác nhận đăng xuất
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Bạn có chắc chắn muốn đăng xuất khỏi tài khoản
-                            không?
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Hủy</AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-orange-500 text-white hover:bg-orange-600"
-                            onClick={logoutUser}
-                          >
-                            Đăng xuất
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    <DropdownMenuItem asChild>
+                      <button
+                        onClick={logoutUser}
+                        className="block px-2 py-1 text-sm text-gray-800 hover:text-orange-500"
+                      >
+                        Đăng xuất
+                      </button>
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (

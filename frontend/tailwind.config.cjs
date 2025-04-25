@@ -50,8 +50,16 @@ module.exports = {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
-  		}
+  		},
+      textShadow: {
+        sm: "0.3px 0.3px 1.5px rgba(255, 165, 0, 0.5)", // Small shadow with orange color
+        DEFAULT: "2px 2px 4px rgba(255, 165, 0, 0.7)", // Default shadow with orange color
+        lg: "3px 3px 6px rgba(255, 165, 0, 0.9)", // Large shadow with orange color
+      },
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("tailwindcss-textshadow"), // Add this plugin
+  ],
 }

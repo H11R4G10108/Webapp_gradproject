@@ -304,7 +304,7 @@ export default function CompareRoom() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-6 px-3 text-left text-lg font-semibold text-gray-700 w-1/4">
+                  <th className="py-6 px-3 text-left text-lg text-gray-700 w-1/4">
                     Thông tin so sánh
                   </th>
                   
@@ -320,8 +320,8 @@ export default function CompareRoom() {
                             <XMarkIcon className="h-5 w-5" />
                           </button>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 line-clamp-2 mb-1">
-                          {room.content}
+                        <h3 className=" font-medium  text-gray-800 mb-1">
+                        {room.content.length > 50 ? `${room.content.substring(0, 55)}...` : room.content}
                         </h3>
                         <Link 
                           to={`/article/${room.postid}`}
@@ -528,7 +528,7 @@ export default function CompareRoom() {
                       >
                         <div className="flex justify-between">
                   {room.content.length > 50 ? `${room.content.substring(0, 55)}...` : room.content}
-                          <span className="text-orange-500 font-bold">{formatPrice(room.price)} VNĐ/tháng</span>
+                          <span className="text-orange-500">{formatPrice(room.price)} VNĐ/tháng</span>
                         </div>
                         <p className="text-sm text-gray-600">{room.district}, {room.ward}</p>
                       </div>

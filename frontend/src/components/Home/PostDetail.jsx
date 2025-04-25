@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import useAxios from "../../utils/useAxios";
@@ -19,8 +19,21 @@ import {
 } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkSolid } from "@heroicons/react/24/solid";
 import { motion } from "framer-motion";
-import Navbar from "../Navbar/Navbar";
-import Footer from "../Footer/Footer";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import iconUrl from '../../assets/icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+const markerIcon = L.icon({
+  iconUrl,
+  shadowUrl,
+  iconSize: [35, 35],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function PostDetail() {
@@ -29,17 +42,28 @@ export default function PostDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [position, setPosition] = useState([16.047079, 108.206230]); // Default position: Da Nang
+  const [mapLoaded, setMapLoaded] = useState(false);
   const { user } = useContext(AuthContext);
   const api = useAxios();
   const userId = user ? user.user_id : null;
+  const mapRef = useRef(null);
 
   // Fetch post details
   useEffect(() => {
     const fetchPostDetail = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${BASE_URL}/post-detail/${postId}/`); 
+        const response = await axios.get(`${BASE_URL}/post-detail/${postId}/`);
         setPost(response.data);
+        
+        // Extract coordinates if available
+        if (response.data.latitude && response.data.longitude) {
+          setPosition([response.data.latitude, response.data.longitude]);
+        } else {
+          // If no coordinates, try to geocode the address
+          geocodeAddress(response.data);
+        }
         
         // Check if post is bookmarked if user is logged in
         if (userId) {
@@ -55,6 +79,61 @@ export default function PostDetail() {
 
     fetchPostDetail();
   }, [postId, userId]);
+
+  // Attempt to geocode the address if coordinates aren't provided
+  const geocodeAddress = async (postData) => {
+    if (!postData) return;
+    
+    const address = `${postData.street_address}, ${postData.ward}, ${postData.district}, Đà Nẵng, Việt Nam`;
+    
+    try {
+      // Using Nominatim OpenStreetMap geocoding service
+      const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+        params: {
+          q: address,
+          format: 'json',
+          limit: 1
+        },
+        headers: {
+          'User-Agent': 'TroDaNang Website' // Required by Nominatim usage policy
+        }
+      });
+      
+      if (response.data && response.data.length > 0) {
+        const { lat, lon } = response.data[0];
+        setPosition([parseFloat(lat), parseFloat(lon)]);
+      } else {
+        // Fallback to district-level coordinates
+        getDistrictCoordinates(postData.district);
+      }
+    } catch (error) {
+      console.error("Geocoding error:", error);
+      // Fallback to district-level coordinates
+      getDistrictCoordinates(postData.district);
+    }
+  };
+
+  // Fallback coordinates for districts in Da Nang
+  const getDistrictCoordinates = (district) => {
+    const districtCoordinates = {
+      "Hải Châu": [16.0472, 108.2099],
+      "Thanh Khê": [16.0639, 108.1844],
+      "Sơn Trà": [16.1065, 108.2537],
+      "Ngũ Hành Sơn": [16.0210, 108.2480],
+      "Cẩm Lệ": [16.0058, 108.2008],
+      "Liên Chiểu": [16.0981, 108.1385],
+      "Hòa Vang": [16.0639, 108.0132]
+    };
+    
+    setPosition(districtCoordinates[district] || [16.047079, 108.206230]);
+  };
+
+  // Update map when position changes
+  useEffect(() => {
+    if (mapRef.current && mapLoaded) {
+      mapRef.current.setView(position, 15);
+    }
+  }, [position, mapLoaded]);
 
   // Check if post is bookmarked
   const checkBookmarkStatus = async () => {
@@ -287,8 +366,7 @@ export default function PostDetail() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-        <Navbar />
-      <section className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12">
         {/* Breadcrumb */}
         <nav className="mb-8">
           <ol className="flex text-gray-500 text-sm">
@@ -351,7 +429,7 @@ export default function PostDetail() {
                     {post.ward}
                   </span>
                   <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                    {post.area}m2
+                    {post.area}
                   </span>
                 </div>
                 
@@ -450,19 +528,6 @@ export default function PostDetail() {
               </div>
             </div>
             
-            {/* Map Section (Placeholder) */}
-            <div className="bg-white shadow-md rounded-xl overflow-hidden p-6">
-              <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2 flex items-center">
-                <MapPinIcon className="h-5 w-5 mr-2 text-orange-500" />
-                Vị trí trên bản đồ
-              </h2>
-              <div className="bg-gray-100 h-80 rounded-lg flex justify-center items-center">
-                <div className="text-center">
-                  <MapPinIcon className="h-12 w-12 mx-auto text-gray-400 mb-2" />
-                  <p className="text-gray-500">Bản đồ vị trí phòng trọ</p>
-                </div>
-              </div>
-            </div>
           </motion.div>
 
           {/* Sidebar */}
@@ -472,6 +537,42 @@ export default function PostDetail() {
             animate="visible"
             transition={{ delay: 0.2 }}
           >
+                        {/* Map Section with Leaflet */}
+                        <div className="bg-white shadow-md rounded-xl overflow-hidden p-6">
+              <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2 flex items-center">
+                <MapPinIcon className="h-5 w-5 mr-2 text-orange-500" />
+                Vị trí trên bản đồ
+              </h2>
+              <div className="h-80 rounded-lg overflow-hidden">
+                <MapContainer 
+                  center={position} 
+                  zoom={15} 
+                  style={{ height: "100%", width: "100%" }}
+                  whenCreated={(map) => {
+                    mapRef.current = map;
+                    setMapLoaded(true);
+                  }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker position={position} icon={markerIcon}>
+                    <Popup>
+                      <div className="text-center">
+                        <strong className="block mb-1">{post.content}</strong>
+                        <span className="text-sm block">{formatPrice(post.price)} VNĐ/tháng</span>
+                        <span className="text-xs text-gray-500 block mt-1">{post.street_address}, {post.ward}, {post.district}</span>
+                      </div>
+                    </Popup>
+                  </Marker>
+                </MapContainer>
+              </div>
+              <div className="mt-4 text-sm text-gray-500 italic flex items-center">
+                <MapPinIcon className="h-4 w-4 mr-1 inline text-orange-500" />
+                <span className="text-xs">Vị trí hiển thị trên bản đồ có thể không chính xác 100%</span>
+              </div>
+            </div>
             {/* Contact Information */}
             <div className="bg-white shadow-md rounded-xl overflow-hidden mb-6">
               <div className="p-6 border-b border-gray-100">
@@ -514,17 +615,12 @@ export default function PostDetail() {
                 >
                   Gọi ngay
                 </a>
+                
                 <a
                   href={`sms:${post.contact_info}`}
-                  className="block w-full border border-orange-500 text-orange-500 text-center px-6 py-3 rounded-lg hover:bg-orange-50 transition font-medium"
+                  className="block w-full border-2 border-orange-500 text-orange-500 text-center px-6 py-3 rounded-lg hover:bg-orange-50 transition font-medium"
                 >
                   Nhắn tin
-                </a>
-                <a
-                  href={`${post.postURL}`}
-                  className="block w-full mt-4 border border-orange-500 text-orange-500 text-center px-6 py-3 rounded-lg hover:bg-orange-50 transition font-medium"
-                >
-                  Dẫn tôi tới bài viết gốc
                 </a>
               </div>
             </div>
@@ -544,6 +640,35 @@ export default function PostDetail() {
                 </div>
               </div>
             </div>
+
+            {/* Directions */}
+            <div className="bg-white shadow-md rounded-xl overflow-hidden mt-6">
+              <div className="p-6 border-b border-gray-100">
+                <h2 className="text-xl font-bold text-gray-800">
+                  Chỉ đường
+                </h2>
+              </div>
+              
+              <div className="p-6">
+                <a 
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${position[0]},${position[1]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full bg-blue-500 text-white text-center px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium mb-3"
+                >
+                  Chỉ đường bằng Google Maps
+                </a>
+                
+                <a 
+                  href={`https://www.openstreetmap.org/directions?from=&to=${position[0]}%2C${position[1]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full border-2 border-blue-500 text-blue-500 text-center px-6 py-3 rounded-lg hover:bg-blue-50 transition font-medium"
+                >
+                  Chỉ đường bằng OpenStreetMap
+                </a>
+              </div>
+            </div>
           </motion.div>
         </div>
         
@@ -557,8 +682,7 @@ export default function PostDetail() {
             Quay lại danh sách phòng trọ
           </Link>
         </div>
-      </section>
-      <Footer />
+      </div>
     </div>
   );
 }

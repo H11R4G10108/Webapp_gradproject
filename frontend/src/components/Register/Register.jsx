@@ -21,9 +21,14 @@ export default function Register() {
   return (
     <div>
       <Navbar />
-      <div className="flex justify-center items-center mt-10">
-        <div className="max-w-md mx-auto bg-white p-10 shadow shadow-slate-300 gap-15">
-          <h1 className="text-4xl font-medium mb-5">Tạo tài khoản</h1>
+      <div className="flex justify-center items-center mt-5">
+        <div className="max-w-md mx-auto p-10 gap-15">
+        <h1
+            className="text-3xl font-bold text-orange-500 text-shadow-sm"
+            id="typewriter"
+          >
+            Tạo tài khoản
+          </h1>          
           <form onSubmit={submitHandler}>
             <label>Username*</label>
             <input
@@ -89,7 +94,7 @@ export default function Register() {
             )}
             <button
               id="submit-btn"
-              className="px-4 py-2 mt-8 w-full rounded-sm hover:bg-white hover:text-black border border-orange-500 text-xm bg-orange-500 text-white"
+              className="w-full mt-5 py-3 text-white font-semibold rounded-md bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 shadow-md hover:shadow-lg transition-all duration-300"
               type="submit"
             >
               Tạo tài khoản

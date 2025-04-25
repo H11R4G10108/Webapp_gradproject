@@ -21,8 +21,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import SkeletonLoader from "../SkeletonLoader/SkeletonLoader";
-import { Checkbox } from "@/components/ui/checkbox"
-
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
+import BackToTop from "@/components/ui/backtotop";
+import SearchBar from "../SearchPage/SearchBar";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function PostList() {
@@ -42,7 +44,8 @@ export default function PostList() {
     priceMin: "",
     priceMax: "",
   });
-  const [filtersReady, setFiltersReady] = useState(false); // New state to track when filters are ready
+  const [priceRange, setPriceRange] = useState([0, 10000000]); // Default price range in VND
+  const [filtersReady, setFiltersReady] = useState(false);
   const [totalPosts, setTotalPosts] = useState(0);
 
   const api = useAxios();
@@ -59,6 +62,9 @@ export default function PostList() {
     { id: 7, name: "Hòa Vang" },
   ];
 
+  // Max price for slider (10 million VND)
+  const MAX_PRICE = 10000000;
+
   // Handle district filter changes
   const handleDistrictChange = (districtName) => {
     setFilters(prev => {
@@ -67,6 +73,16 @@ export default function PostList() {
         : [...prev.districts, districtName];
       return { ...prev, districts };
     });
+  };
+
+  // Handle price range slider change
+  const handlePriceRangeChange = (values) => {
+    setPriceRange(values);
+    setFilters(prev => ({
+      ...prev,
+      priceMin: values[0] > 0 ? values[0].toString() : "",
+      priceMax: values[1] < MAX_PRICE ? values[1].toString() : ""
+    }));
   };
 
   // Remove district filter tag
@@ -106,6 +122,17 @@ export default function PostList() {
     setPosts([]);
     setHasMore(true);
     // This will trigger the loadPosts effect
+  };
+
+  // Reset all filters
+  const resetFilters = () => {
+    setFilters({
+      districts: [],
+      priceMin: "",
+      priceMax: ""
+    });
+    setPriceRange([0, MAX_PRICE]);
+    applyFilters();
   };
 
   const loadPosts = useCallback(async () => {
@@ -243,15 +270,15 @@ export default function PostList() {
   };
 
   // Sort posts
-const getSortedPosts = (posts = [], option) => {
-  return [...posts].sort((a, b) => {
-    if (option === "latest") return new Date(b.p_date) - new Date(a.p_date);
-    if (option === "oldest") return new Date(a.p_date) - new Date(b.p_date);
-    if (option === "price_low") return a.price - b.price;
-    if (option === "price_high") return b.price - a.price;
-    return 0;
-  });
-};
+  const getSortedPosts = (posts = [], option) => {
+    return [...posts].sort((a, b) => {
+      if (option === "latest") return new Date(b.p_date) - new Date(a.p_date);
+      if (option === "oldest") return new Date(a.p_date) - new Date(b.p_date);
+      if (option === "price_low") return a.price - b.price;
+      if (option === "price_high") return b.price - a.price;
+      return 0;
+    });
+  };
   const sortedPosts = getSortedPosts(posts, sortOption);
 
   const postVariants = {
@@ -270,7 +297,7 @@ const getSortedPosts = (posts = [], option) => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 flex justify-center items-center flex-col">
           <h1 className="text-4xl font-extrabold text-gray-800 mb-4">
             Tìm trọ theo địa điểm
           </h1>
@@ -278,8 +305,9 @@ const getSortedPosts = (posts = [], option) => {
           <div className="mb-6 text-lg text-gray-600 max-w-4xl mx-auto">
             Dù là trung tâm hay ven biển, Trọ Đà Nẵng giúp bạn tìm ngay nơi ở lý tưởng trong khu vực.
           </div>
-        </div>
+          <SearchBar />
 
+        </div>
         {/* Filter Toggle & Search Controls */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <button 
@@ -358,29 +386,30 @@ const getSortedPosts = (posts = [], option) => {
                 </div>
               </div>
               
-              {/* Price Range Filter */}
+              {/* Price Range Slider */}
               <div>
                 <h3 className="font-medium mb-3 text-gray-700 border-l-4 border-orange-500 pl-3">Khoảng giá (VNĐ)</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-sm text-gray-500 mb-1 block">Từ</label>
-                    <input
-                      type="number"
-                      value={filters.priceMin}
-                      onChange={(e) => setFilters({...filters, priceMin: e.target.value})}
-                      className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500"
-                      placeholder="Min"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-500 mb-1 block">Đến</label>
-                    <input
-                      type="number"
-                      value={filters.priceMax}
-                      onChange={(e) => setFilters({...filters, priceMax: e.target.value})}
-                      className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500"
-                      placeholder="Max"
-                    />
+                <div className="px-3 py-6">
+                  <Slider
+                    defaultValue={[0, MAX_PRICE]}
+                    value={priceRange}
+                    min={0}
+                    max={MAX_PRICE}
+                    step={100000}
+                    onValueChange={handlePriceRangeChange}
+                    className="mb-6"
+                  />
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="text-sm">
+                      <span className="block text-gray-500 mb-1">Từ:</span>
+                      <span className="font-semibold text-gray-800">{formatPrice(priceRange[0])} VNĐ</span>
+                    </div>
+                    <div className="text-sm text-right">
+                      <span className="block text-gray-500 mb-1">Đến:</span>
+                      <span className="font-semibold text-gray-800">
+                        {priceRange[1] >= MAX_PRICE ? "10,000,000+" : formatPrice(priceRange[1])} VNĐ
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -388,14 +417,7 @@ const getSortedPosts = (posts = [], option) => {
             
             <div className="mt-8 flex justify-end">
               <button
-                onClick={() => {
-                  setFilters({
-                    districts: [],
-                    priceMin: "",
-                    priceMax: ""
-                  });
-                  applyFilters();
-                }}
+                onClick={resetFilters}
                 className="bg-gray-200 text-gray-800 px-5 py-2.5 rounded-lg mr-3 hover:bg-gray-300 transition font-medium"
               >
                 Xóa bộ lọc
@@ -437,6 +459,7 @@ const getSortedPosts = (posts = [], option) => {
                   <span>Giá từ: {formatPrice(filters.priceMin)} VNĐ/tháng</span>
                   <button 
                     onClick={() => {
+                      setPriceRange([0, priceRange[1]]);
                       setFilters({...filters, priceMin: ""});
                       applyFilters();
                     }}
@@ -452,6 +475,7 @@ const getSortedPosts = (posts = [], option) => {
                   <span>Giá đến: {formatPrice(filters.priceMax)} VNĐ/tháng</span>
                   <button 
                     onClick={() => {
+                      setPriceRange([priceRange[0], MAX_PRICE]);
                       setFilters({...filters, priceMax: ""});
                       applyFilters();
                     }}
@@ -463,14 +487,7 @@ const getSortedPosts = (posts = [], option) => {
               )}
               
               <button
-                onClick={() => {
-                  setFilters({
-                    districts: [],
-                    priceMin: "",
-                    priceMax: ""
-                  });
-                  applyFilters();
-                }}
+                onClick={resetFilters}
                 className="text-orange-700 hover:text-orange-800 text-sm flex items-center ml-2"
               >
                 Xóa tất cả bộ lọc
@@ -528,7 +545,7 @@ const getSortedPosts = (posts = [], option) => {
                   
                   <div className="grid md:grid-cols-3 gap-6">
                     <div className="md:col-span-2">
-                      <h2 className="text-xl font-bold mb-3 text-gray-800">
+                      <h2 className="text-base mb-3 text-gray-800">
                         {post.content}
                       </h2>
                       <div className="space-y-3">
@@ -548,12 +565,12 @@ const getSortedPosts = (posts = [], option) => {
                     </div>
                     
                     <div className="flex flex-col justify-between">
-                      <div className="text-2xl font-bold text-orange-500 mb-4">
+                      <div className="text-xl font-bold text-orange-500 mb-4">
                         {formatPrice(post.price)} VNĐ/tháng
                       </div>
                       <Link
                         to={`/article/${post.postid}`}
-                        className="border-2 border-orange-500 text-orange-500 text-center px-5 py-3 rounded-md hover:bg-orange-500 hover:text-white transition font-medium"
+                        className="border-2 border-orange-500 text-orange-500 text-center px-5 py-3 rounded-md hover:bg-orange-500 hover:text-white transition"
                       >
                         Xem chi tiết
                       </Link>
@@ -571,7 +588,7 @@ const getSortedPosts = (posts = [], option) => {
             {loading && currentPage === 1 ? (
               Array(6).fill(0).map((_, index) => (
                 <div key={index}>
-                  <SkeletonLoader  viewMode={viewMode} />
+                  <SkeletonLoader viewMode={viewMode} />
                 </div>
               ))
             ) : (
@@ -607,7 +624,7 @@ const getSortedPosts = (posts = [], option) => {
                       )}
                     </div>
                     
-                    <h2 className="text-lg font-bold mb-3 line-clamp-2 text-gray-800">
+                    <h2 className="text-lg mb-3 line-clamp-2 text-gray-800">
                       {post.content}
                     </h2>
                     
@@ -712,6 +729,13 @@ const getSortedPosts = (posts = [], option) => {
           </div>
         )}
       </div>
+            <BackToTop 
+        threshold={400}
+        position="bottom-right"
+        backgroundColor="bg-orange-500"
+        hoverColor="hover:bg-orange-600"
+        size="md"
+      />
     </div>
   );
 }

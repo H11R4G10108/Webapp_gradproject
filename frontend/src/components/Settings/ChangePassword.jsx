@@ -142,7 +142,7 @@ export default function ChangePassword() {
                                 </div>
                             )}
                         </div>
-                        <button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold p-2 rounded-lg mt-4 w-52">Change Password</button>
+                        <button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold p-2 rounded-lg mt-4 w-52">Đổi mật khẩu</button>
                     </div>
                 </form>
             </div>

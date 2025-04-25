@@ -41,7 +41,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full flex flex-row sticky top-0 md:p-3 p-2 items-center h-15 gap-5">
+    <header className="w-full sticky top-0 items-center h-5 gap-5 mt-5">
       <div className="flex flex-row items-center gap-5">
         {isDetail && (
           <Link to="/" className="text-black">
@@ -49,9 +49,9 @@ export default function Header() {
           </Link>
         )}
         <p className="md:ml-5 text-lg md:text-2xl">{title}</p>
-        <MagnifyingGlassIcon className="h-5 w-5 md:hidden" onClick={toggleSearchbar} />
+        {/* <MagnifyingGlassIcon className="h-5 w-5 md:hidden" onClick={toggleSearchbar} /> */}
       </div>
-      {/* MOBILE SEARCH FUNCTION */}
+      {/* MOBILE SEARCH FUNCTION
       {isSearchActive && !isExcluded ? (
         <div>
           <motion.div
@@ -83,7 +83,7 @@ export default function Header() {
           </motion.div>
           <div className="fixed inset-0 bg-black opacity-50 z-40" onClick={toggleSearchbar}></div>
         </div>
-      ) : null}
+      ) : null} */}
       {/* SEARCH FUNCTION */}
       {!isExcluded ? (
         <form className="md:flex hidden" id="search_form" onSubmit={searchArticle}>

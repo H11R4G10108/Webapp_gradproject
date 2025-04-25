@@ -34,7 +34,6 @@ export default function BookmarkList() {
   const { ref, inView } = useInView({ threshold: 1 });
   const { user } = useContext(AuthContext);
   const user_id = user ? user.user_id : null;
-  
   useEffect(() => {
     const loadPosts = async () => {
       if (!hasMore) return;

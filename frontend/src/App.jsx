@@ -18,6 +18,7 @@ import NewFunc from "./components/Home/new.jsx";
 import LandingPage from "./components/Home/LandingPage.jsx";
 import CompareRoom from "./components/Compare/CompareRoom.jsx";
 import Register from "./components/Register/Register.jsx";
+import About from "./components/About/About";
 function App() {
   return (
     <AuthProvider>
@@ -79,7 +80,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/password-reset/:token" element={<PasswordReset />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/test" element={<NewFunc />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </AuthProvider>
   );
