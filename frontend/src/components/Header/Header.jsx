@@ -14,10 +14,10 @@ export default function Header() {
   const getTitle = () => {
     const path = location.pathname;
     if (path === "/") return "Home";
-    if (path.includes("/scraper-bot")) return "Scraper bot";
+    if (path.includes("/crawl-bot")) return "Crawl bot";
     if (path.includes("/bookmarks")) return "Bookmarks";
-    if (path.includes("/settings/account-information")) return "Account Information";
-    if (path.includes("/settings/change-password")) return "Change Password";
+    if (path.includes("/settings/account-information")) return "Thông tin tài khoản";
+    if (path.includes("/settings/change-password")) return "Đổi mật khẩu";
     if (path.includes("/search-post")) return "Search Result";
     if (path.includes("/post/")) return "Post Detail";
     return "";
@@ -41,17 +41,17 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full flex flex-row justify-between sticky top-0 bg-slate-100 md:p-3 p-2 border-b-2 items-center h-15">
-      <div className="flex flex-row items-center justify-around gap-5">
+    <header className="w-full sticky top-0 items-center h-5 gap-5 mt-5">
+      <div className="flex flex-row items-center gap-5">
         {isDetail && (
           <Link to="/" className="text-black">
             <ArrowLeftIcon className="h-7 w-7 mr-2" />
           </Link>
         )}
         <p className="md:ml-5 text-lg md:text-2xl">{title}</p>
-        <MagnifyingGlassIcon className="h-5 w-5 md:hidden" onClick={toggleSearchbar} />
+        {/* <MagnifyingGlassIcon className="h-5 w-5 md:hidden" onClick={toggleSearchbar} /> */}
       </div>
-      {/* MOBILE SEARCH FUNCTION */}
+      {/* MOBILE SEARCH FUNCTION
       {isSearchActive && !isExcluded ? (
         <div>
           <motion.div
@@ -83,14 +83,14 @@ export default function Header() {
           </motion.div>
           <div className="fixed inset-0 bg-black opacity-50 z-40" onClick={toggleSearchbar}></div>
         </div>
-      ) : null}
+      ) : null} */}
       {/* SEARCH FUNCTION */}
       {!isExcluded ? (
         <form className="md:flex hidden" id="search_form" onSubmit={searchArticle}>
           <input
             type="text"
             id="search"
-            className="p-2 text-base text-gray-900 rounded-l-md"
+            className="p-2 text-base text-gray-900 rounded-l-md w-max"
             placeholder="Enter keywords ..."
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}

@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 const BASE_URL = import.meta.env.VITE_API_URL
+import Navbar from "../Navbar/Navbar";
 
 export default function SettingPage() {
     const { user } = useContext(AuthContext);
@@ -58,21 +59,22 @@ export default function SettingPage() {
     if (error) return <p>{error}</p>;
 
     return (
+        <>
+        <Navbar />
         <div className="flex ">
-            <Sidebar />
             <Sidebar2 />
             <div className='flex flex-col'>
                 <Header />
-                <div className="flex justify-center items-center bg-slate-100">
+                <div className="flex justify-center items-center">
                 </div>
-                <div className="flex  w-full p-5 items-center  bg-slate-100">
+                <div className="flex  w-full p-5 items-center">
                     <div className="flex flex-col  w-full gap-5">
                         <div className="flex flex-col mt-4">
                             <label className="text-sm font-semibold">Username</label>
                             <p
                                 className="border border-gray-300 rounded-lg p-2 mt-1">{users.username}</p>
                             <a href="/settings/account-information/change-username" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
-                                Change Username →
+                                Đổi tên người dùng →
                             </a>
                         </div>
                         <div className="flex flex-col mt-4">
@@ -80,12 +82,12 @@ export default function SettingPage() {
                             <p
                                 className="border border-gray-300 rounded-lg p-2 mt-1">{users.email}</p>
                             <a href="/settings/account-information/change-email" className="font-medium text-orange-400 text-sm mt-4 hover:underline">
-                                Change Email →
+                                Đổi Email →
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div></>
     );
 }

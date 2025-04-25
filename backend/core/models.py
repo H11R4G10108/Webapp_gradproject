@@ -43,42 +43,37 @@ def password_reset_token_created(reset_password_token, *args, **kwargs):
 
     msg.attach_alternative(html_message, "text/html")
     msg.send()
+
 class Post(models.Model):
-    postid = models.BigAutoField(db_column='postID', primary_key=True)
-    p_date = models.DateTimeField()
-    groupurl = models.CharField(db_column='groupURL', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    posturl = models.CharField(db_column='postURL', unique=True, max_length=255, blank=True, null=True)  # Field name made lowercase.
+    postid = models.BigAutoField(db_column='postID', primary_key=True, verbose_name="Post ID")
+    postURL= models.CharField(max_length=255, blank=True, null=True, verbose_name="Post URL")
+    # Thông tin bài đăng
+    p_date = models.DateTimeField(verbose_name="Thời gian đăng")
+    groupurl = models.CharField(db_column='groupURL', max_length=255, blank=True, null=True)
     content = models.TextField(blank=True, null=True)
-    image = models.CharField(max_length=255, blank=True, null=True)
-    react_num = models.IntegerField(blank=True, null=True)
-    cmt_num = models.IntegerField(blank=True, null=True)
-    statusid = models.ForeignKey('Status', on_delete=models.CASCADE, db_column='statusID', blank=True, null=True)  # Field name made lowercase.
-    reply = models.TextField(blank=True, null=True)
-    r_date = models.DateTimeField(blank=True, null=True)
+
+    # Thông tin địa chỉ
+    district = models.CharField(max_length=100, blank=True, null=True, verbose_name="Quận")
+    ward = models.CharField(max_length=100, blank=True, null=True, verbose_name="Phường")
+    street_address = models.CharField(max_length=255, blank=True, null=True, verbose_name="Đường/Số nhà")
+
+    # Thông tin nhà trọ
+    price = models.IntegerField(blank=True, null=True, verbose_name="Giá cho thuê (VNĐ)")
+    area = models.CharField(max_length=50, blank=True, null=True, verbose_name="Kích thước (m²)")
+    amenities = models.TextField(blank=True, null=True, verbose_name="Thông tin tiện ích bổ sung")
+    contact_info = models.CharField(max_length=255, blank=True, null=True, verbose_name="Thông tin liên hệ")
+
+    # Mức độ tương tác
+    react_num = models.IntegerField(blank=True, null=True, verbose_name="Lượt cảm xúc")
+    cmt_num = models.IntegerField(blank=True, null=True, verbose_name="Lượt bình luận")
+
+
     def __str__(self):
         return f"Post {self.postid}"
+
     class Meta:
         db_table = 'post'
 
-
-
-class Comment(models.Model):
-    cmtid = models.BigAutoField(db_column='cmtID', primary_key=True)  # Field name made lowercase.
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, help_text="The post of the comment")  # Field name made lowercase.
-    c_date = models.DateTimeField()
-    content = models.TextField(blank=True, null=True)
-    class Meta:
-        db_table = 'comment'
-
-
-class Status(models.Model):
-    statusid = models.BigAutoField(db_column='statusID', primary_key=True)  # Field name made lowercase.
-    status_desc = models.CharField(unique=True, max_length=20, blank=True, null=True)
-
-    def __str__(self):
-        return self.status_desc
-    class Meta:
-        db_table = 'status'
 
 
 class User(AbstractUser):

@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
         title: "Registration Successful, Login Now",
         icon: "success",
         toast: true,
-        timer: 6000,
+        timer: 3000,
         position: "top-right",
         timerProgressBar: true,
         showCloseButton: false,
@@ -114,13 +114,13 @@ export const AuthProvider = ({ children }) => {
     setAuthTokens(null);
     setUser(null);
     localStorage.removeItem("authTokens");
-    navigate("/login/");
+    navigate("/");
     Swal.fire({
       title: "You have been logged out...",
       icon: "success",
       toast: true,
-      timer: 6000,
-      position: "top-right",
+      timer: 3000,
+      position: "bottom-right",
       timerProgressBar: true,
       showConfirmButton: false,
     });

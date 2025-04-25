@@ -6,246 +6,407 @@ import Swal from "sweetalert2";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import { useInView } from "react-intersection-observer";
-import "react-loading-skeleton/dist/skeleton.css";
-import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { 
+  ListBulletIcon, 
+  Squares2X2Icon, 
+  ArrowsUpDownIcon,
+  MapPinIcon,
+  HomeIcon,
+  PhoneIcon,
+  CalendarIcon
+} from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import SkeletonLoader from "../SkeletonLoader/SkeletonLoader";
-import "./BookmarkList.css";
+
 const BASE_URL = import.meta.env.VITE_API_URL
 
 export default function BookmarkList() {
-    const [loading, setLoading] = useState(false);
-    const [posts, setPosts] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [error, setErrors] = useState("");
-    const [sortOption, setSortOption] = useState("latest");
-    const api = useAxios();
-    const { user } = useContext(AuthContext);
-    const { ref, inView } = useInView({ threshold: 1 });
-    const [viewMode, setViewMode] = useState("tiles");
-    const user_id = user ? user.user_id : null;
-    useEffect(() => {
-        const loadPosts = async () => {
-            if (!hasMore) return;
-            setLoading(true);
-            try {
-                const response = await api.get(
-                    `${BASE_URL}/bookmarks/?userid=${user_id}&page=${currentPage}`
-                );
-                const newPosts = response.data.results;
-                setPosts((prevPosts) => {
-                    const allPosts = [...prevPosts, ...newPosts];
-                    // Remove duplicates using a Map
-                    const uniquePosts = Array.from(new Map(allPosts.map(bookmark => [bookmark.post.postid, bookmark])).values());
-                    console.log("Posts:", uniquePosts);
-                    return uniquePosts;
-                });
-                setHasMore(!!response.data.next); // Check if there are more pages
-            } catch (error) {
-                console.error("Error fetching posts:", error);
-                setErrors("Failed to load posts.");
-            }
-            setLoading(false);
-        };
-
-        loadPosts();
-    }, [user_id, currentPage]);
-
-    useEffect(() => {
-        if (inView && hasMore) {
-            setCurrentPage((prev) => prev + 1);
-        }
-    }, [inView, hasMore]);
-
-    const toggleBookmark = async (postId) => {
-        await api
-            .post(`${BASE_URL}/bookmark-toggle/${postId}/`)
-            .then((response) => {
-                console.log(response);
-                if (response.status === 204) {
-                    console.log("Bookmark removed successfully");
-                    Swal.fire({
-                        title: "Bookmark removed successfully",
-                        icon: "success",
-                        toast: true,
-                        timer: 3000,
-                        position: "bottom-right",
-                        timerProgressBar: true,
-                        showCloseButton: true,
-                        showConfirmButton: false,
-                    });
-                }
-                setTimeout(() => {
-                    window.location.reload(); // Reloads the page after success
-                }, 1000);
-            })
-            .catch((error) => {
-                console.log(error);
-                if (error.response) {
-                    console.log("Error response:", error.response);
-                    console.log("Error data:", error.response.data);
-                    console.log("Error status:", error.response.status);
-                } else if (error.request) {
-                    console.log("Error request:", error.request);
-                } else {
-                    console.log("Error message:", error.message);
-                }
-                Swal.fire({
-                    title: "There was an error",
-                    text: "Please try again",
-                    icon: "error",
-                    toast: true,
-                    timer: 6000,
-                    position: "bottom-right",
-                    timerProgressBar: true,
-                    showCloseButton: true,
-                    showConfirmButton: false,
-                });
-            });
+  const [loading, setLoading] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [error, setErrors] = useState("");
+  const [sortOption, setSortOption] = useState("latest");
+  const [viewMode, setViewMode] = useState("tiles");
+  const [totalPosts, setTotalPosts] = useState(0);
+  
+  const api = useAxios();
+  const { ref, inView } = useInView({ threshold: 1 });
+  const { user } = useContext(AuthContext);
+  const user_id = user ? user.user_id : null;
+  useEffect(() => {
+    const loadPosts = async () => {
+      if (!hasMore) return;
+      setLoading(true);
+      try {
+        const response = await api.get(
+          `${BASE_URL}/bookmarks/?userid=${user_id}&page=${currentPage}`
+        );
+        const newPosts = response.data.results;
+        setPosts((prevPosts) => {
+          const allPosts = [...prevPosts, ...newPosts];
+          // Remove duplicates using a Map
+          const uniquePosts = Array.from(new Map(allPosts.map(bookmark => [bookmark.post.postid, bookmark])).values());
+          return uniquePosts;
+        });
+        setTotalPosts(response.data.count);
+        setHasMore(!!response.data.next); // Check if there are more pages
+      } catch (error) {
+        console.error("Error fetching bookmarks:", error);
+        setErrors("Failed to load bookmarks.");
+      }
+      setLoading(false);
     };
 
-    if (error) return <p className="text-center mt-10">{error}</p>;
+    if (user_id) {
+      loadPosts();
+    }
+  }, [user_id, currentPage]);
 
-    const sortedPosts = [...posts].sort((a, b) => {
-        if (sortOption === "latest") return new Date(b.post.p_date) - new Date(a.post.p_date);
-        if (sortOption === "oldest") return new Date(a.post.p_date) - new Date(b.post.p_date);
-        return 0;
+  useEffect(() => {
+    if (inView && hasMore) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  }, [inView, hasMore]);
+
+  const toggleBookmark = async (postId) => {
+    try {
+      const response = await api.post(`${BASE_URL}/bookmark-toggle/${postId}/`);
+      
+      if (response.status === 204) {
+        // Remove the post from the current list
+        setPosts(posts.filter(item => item.post.postid !== postId));
+        setTotalPosts(prev => prev - 1);
+        
+        Swal.fire({
+          title: "Đã xóa khỏi danh sách lưu",
+          toast: true,
+          timer: 3000,
+          position: "bottom",
+          showCloseButton: false,
+          showConfirmButton: false,
+          width: "25em",
+          background: "#fff3e0",
+          iconColor: "#ff7043",
+          icon: "info"
+        });
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      Swal.fire({
+        title: "Có lỗi xảy ra",
+        text: "Vui lòng thử lại sau",
+        icon: "error",
+        toast: true,
+        timer: 6000,
+        position: "bottom-right",
+        timerProgressBar: true,
+        showCloseButton: true,
+        showConfirmButton: false,
+        background: "#fff3e0",
+        iconColor: "#f44336"
+      });
+    }
+  };
+
+  // Sort posts
+  const getSortedPosts = (posts = [], option) => {
+    return [...posts].sort((a, b) => {
+      if (option === "latest") return new Date(b.post.p_date) - new Date(a.post.p_date);
+      if (option === "oldest") return new Date(a.post.p_date) - new Date(b.post.p_date);
+      if (option === "price_low") return a.post.price - b.post.price;
+      if (option === "price_high") return b.post.price - a.post.price;
+      return 0;
     });
-    const postVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-    };
-    (function () {
-        function onReady() {
-            document.body.classList.remove('no-scroll');
-        }
+  };
+  
+  const sortedPosts = getSortedPosts(posts, sortOption);
+  
+  const postVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+  };
+  
+  // Format price to display with commas
+  const formatPrice = (price) => {
+    return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || "N/A";
+  };
 
-        if (document.readyState === 'complete') {
-            setTimeout(onReady, 1000);
-        } else {
-            document.addEventListener('DOMContentLoaded', onReady);
-        }
-    })();
-    return (
-        <div id="no-scroll">
-            <section className="pt-2 flex justify-between items-center px-20">
-                <div className="py-3">
-                    <span className="text-gray-500 mr-2">Sort by</span>
-                    <select
-                        onChange={(e => {
-                            setSortOption(e.target.value);
-                        })}
-                        className="border px-3 py-1 rounded-md"
-                        value={sortOption}
-                    >
-                        <option value="latest">Latest articles</option>
-                        <option value="oldest">Oldest articles</option>
-                    </select>
-                </div>
-                <div className="flex ">
-                    <button className={`border-l-2 rounded-tl-md p-1.5 transition ${viewMode === "tiles" ? "bg-gray-200" : "bg-white"}`}
-                        onClick={() => setViewMode("tiles")}><Squares2X2Icon className="h-7 w-7" /></button>
-                    <button className={`border-2 rounded-tr-md p-1.5 transition ${viewMode === "list" ? "bg-gray-200" : "bg-white"}`} onClick={() => setViewMode("list")}><ListBulletIcon className="h-7 w-7" /></button>
-                </div>
-            </section>
-
-            {/* List vỉew mode */}
-            <section className="flex flex-col gap-5 px-20 pt-5">
-                {viewMode === "list" && sortedPosts && sortedPosts.map((posts, index) => (
-                    <motion.article
-                        key={index}
-                        variants={postVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className="border-y border-slate-200 shadow-sm rounded-md p-1 w-full max-w-full"
-                    >
-                        <div className="flex p-2 justify-between">
-                            <p className="text-xs font-bold">
-                                {new Date(posts.post.p_date).toLocaleTimeString()}{" "}
-                                {new Date(posts.post.p_date).toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
-                                })}
-                            </p>
-                            <button onClick={() => toggleBookmark(posts.post.postid)}>
-                                <BookmarkSlashIcon className="h-5 w-5" />
-                            </button>
-                        </div>
-                        <div className="p-2 flex flex-row justify-between">
-                            <div>
-                                <h2 className="mb-1 text-xm">
-                                    {posts.post.content}
-                                </h2>
-                                <p className="text-sm">Author: Albert Robert</p>
-                                <p className="text-sm">Group: Science Time on Facebook</p>
-                            </div>
-                            <Link to={`/post/${posts.post.postid}`} className="text-blue-500 hover:underline">
-                                See full post →
-                            </Link>
-                        </div>
-                    </motion.article>
-                ))}
-            </section>
-            {/* Tiles view mode  */}
-            <section className="gap-2 grid grid-cols-1 px-2
-                md:grid-cols-2 md:px-20 md:gap-10
-        lg:grid-cols-3
-        xl:grid-cols-3">
-                {viewMode === "tiles" && sortedPosts && sortedPosts.map((posts, index) => (
-                    <motion.article
-                        key={index}
-                        variants={postVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className="border border-slate-200 shadow-sm rounded-md p-3 bg-slate-50 w-full max-w-full"
-                    >
-                        <div className="flex p-2 justify-between">
-                            <p className="text-sm font-bold">
-                                {new Date(posts.post.p_date).toLocaleTimeString()}{" "}
-                                {new Date(posts.post.p_date).toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
-                                })}
-                            </p>
-                            <button onClick={() => toggleBookmark(posts.post.postid)}>
-                                <BookmarkSlashIcon className="h-5 w-5" />
-                            </button>
-                        </div>
-                        <div className="p-2 leading-5">
-                            <h2 className="mb-1 text-xm">
-                                {posts.post.content.length > 50 ? `${posts.post.content.substring(0, 55)}...` : posts.post.content}
-                            </h2>
-                        </div>
-                        <Link to={`/post/${posts.post.postid}`} className="text-blue-500 hover:underline ml-1">
-                            See full post →
-                        </Link>
-                    </motion.article>
-                ))}
-            </section>
-
-            {/* Infinite Scroll Trigger */}
-            {loading ? (
-                <div>
-                    <div className="gap-10 grid grid-cols-3 px-20 pt-5">
-                        {hasMore && viewMode === "tiles" &&
-                            Array(3)
-                                .fill(0)
-                                .map((_, index) => <div ref={ref} key={index}>
-                                    <SkeletonLoader /></div>
-                                )}
-                    </div>
-                    <div className="px-20">
-                        {hasMore && viewMode === "list" &&
-                            Array(1)
-                                .fill(0)
-                                .map((_, index) => <div ref={ref} key={index}>
-                                    <SkeletonLoader /></div>
-                                )}
-                    </div>
-                </div>) : null}
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-extrabold text-gray-800 mb-4">
+            Danh sách phòng trọ đã lưu
+          </h1>
+          
+          <div className="mb-6 text-lg text-gray-600 max-w-4xl mx-auto">
+            Quản lý các phòng trọ bạn đã lưu để tiện theo dõi và so sánh sau này.
+          </div>
         </div>
-    );
+
+        {/* Search Controls */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              <div className="flex items-center gap-2 bg-white rounded-lg border shadow-sm px-4 py-2">
+                <ArrowsUpDownIcon className="h-5 w-5 text-orange-500" />
+                <select
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                  className="appearance-none bg-transparent border-none outline-none py-1 pr-8 cursor-pointer text-gray-700"
+                >
+                  <option value="latest">Mới nhất</option>
+                  <option value="oldest">Cũ nhất</option>
+                  <option value="price_low">Giá: Thấp đến Cao</option>
+                  <option value="price_high">Giá: Cao đến Thấp</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="hidden md:flex border rounded-lg overflow-hidden shadow-sm bg-white">
+              <button 
+                className={`p-2.5 transition flex items-center justify-center w-12 ${viewMode === "tiles" ? "bg-orange-100 text-orange-700" : "bg-white text-gray-500"}`}
+                onClick={() => setViewMode("tiles")}
+              >
+                <Squares2X2Icon className="h-5 w-5" />
+              </button>
+              <button 
+                className={`p-2.5 transition flex items-center justify-center w-12 ${viewMode === "list" ? "bg-orange-100 text-orange-700" : "bg-white text-gray-500"}`} 
+                onClick={() => setViewMode("list")}
+              >
+                <ListBulletIcon className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Display total count */}
+        <div className="mb-6 text-gray-600 flex items-center">
+          <HomeIcon className="h-5 w-5 mr-2 text-orange-500" />
+          <span>Hiển thị <span className="font-semibold">{totalPosts}</span> phòng trọ đã lưu</span>
+        </div>
+
+        {/* List View */}
+        {viewMode === "list" && (
+          <div className="space-y-4">
+            {loading && currentPage === 1 ? (
+              Array(3).fill(0).map((_, index) => (
+                <div key={index} className="mb-4">
+                  <SkeletonLoader viewMode={viewMode} />
+                </div>
+              ))
+            ) : sortedPosts.length > 0 ? (
+              sortedPosts.map((bookmark) => (
+                <motion.article
+                  key={bookmark.id}
+                  variants={postVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="border border-gray-100 shadow-md rounded-xl p-5 bg-white hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <p className="text-sm text-gray-500 flex items-center">
+                      <CalendarIcon className="h-4 w-4 mr-1.5 text-orange-400" />
+                      {new Date(bookmark.post.p_date).toLocaleDateString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </p>
+                    <button 
+                      onClick={() => toggleBookmark(bookmark.post.postid)}
+                      className="p-1.5 rounded-full hover:bg-orange-50"
+                    >
+                      <BookmarkSlashIcon className="h-5 w-5 text-orange-500" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div className="md:col-span-2">
+                      <h2 className="text-xl font-bold mb-3 text-gray-800">
+                        {bookmark.post.content}
+                      </h2>
+                      <div className="space-y-3">
+                        <p className="flex items-center text-gray-700">
+                          <MapPinIcon className="h-5 w-5 mr-2 text-orange-500 flex-shrink-0" />
+                          <span>{bookmark.post.street_address}, {bookmark.post.ward}, {bookmark.post.district}</span>
+                        </p>
+                        <p className="flex items-center text-gray-700">
+                          <HomeIcon className="h-5 w-5 mr-2 text-orange-500 flex-shrink-0" />
+                          <span>{bookmark.post.area}</span>
+                        </p>
+                        <p className="flex items-center text-gray-700">
+                          <PhoneIcon className="h-5 w-5 mr-2 text-orange-500 flex-shrink-0" />
+                          <span>{bookmark.post.contact_info}</span>
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col justify-between">
+                      <div className="text-2xl font-bold text-orange-500 mb-4">
+                        {formatPrice(bookmark.post.price)} VNĐ/tháng
+                      </div>
+                      <Link
+                        to={`/article/${bookmark.post.postid}`}
+                        className="border-2 border-orange-500 text-orange-500 text-center px-5 py-3 rounded-md hover:bg-orange-500 hover:text-white transition font-medium"
+                      >
+                        Xem chi tiết
+                      </Link>
+                    </div>
+                  </div>
+                </motion.article>
+              ))
+            ) : (
+              <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
+                <div className="text-orange-500 mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                </div>
+                <p className="text-xl text-gray-700 mb-4">Bạn chưa có phòng trọ nào được lưu.</p>
+                <Link
+                  to="/posts"
+                  className="mt-2 bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition shadow-md font-medium"
+                >
+                  Khám phá các phòng trọ
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tiles View */}
+        {viewMode === "tiles" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {loading && currentPage === 1 ? (
+              Array(6).fill(0).map((_, index) => (
+                <div key={index}>
+                  <SkeletonLoader viewMode={viewMode} />
+                </div>
+              ))
+            ) : sortedPosts.length > 0 ? (
+              sortedPosts.map((bookmark) => (
+                <motion.article
+                  key={bookmark.id}
+                  variants={postVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="border border-gray-100 shadow-md rounded-xl overflow-hidden bg-white h-full flex flex-col hover:shadow-lg transition-shadow"
+                >
+                  <div className="p-5 flex-grow">
+                    <div className="flex justify-between items-center mb-4">
+                      <p className="text-sm text-gray-500 flex items-center">
+                        <CalendarIcon className="h-4 w-4 mr-1.5 text-orange-400" />
+                        {new Date(bookmark.post.p_date).toLocaleDateString("vi-VN", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                      </p>
+                      <button 
+                        onClick={() => toggleBookmark(bookmark.post.postid)}
+                        className="p-1.5 rounded-full hover:bg-orange-50"
+                      >
+                        <BookmarkSlashIcon className="h-5 w-5 text-orange-500" />
+                      </button>
+                    </div>
+                    
+                    <h2 className="text-lg font-bold mb-3 line-clamp-2 text-gray-800">
+                      {bookmark.post.content}
+                    </h2>
+                    
+                    <div className="space-y-3 mb-4">
+                      <p className="flex items-center text-gray-700">
+                        <MapPinIcon className="h-5 w-5 mr-2 text-orange-500 flex-shrink-0" />
+                        <span className="truncate">{bookmark.post.district}</span>
+                      </p>
+                      <p className="flex items-center text-gray-700">
+                        <HomeIcon className="h-5 w-5 mr-2 text-orange-500 flex-shrink-0" />
+                        <span>{bookmark.post.ward}</span>
+                      </p>
+                    </div>
+                    
+                    <div className="text-xl font-bold text-orange-500 mb-4">
+                      {formatPrice(bookmark.post.price)} VNĐ/tháng
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-gray-50 border-t border-gray-100">
+                    <Link
+                      to={`/article/${bookmark.post.postid}`}
+                      className="block border-2 border-orange-500 text-orange-500 text-center px-4 py-3 rounded-sm hover:bg-orange-500 hover:text-white transition font-medium"
+                    >
+                      Xem chi tiết
+                    </Link>
+                  </div>
+                </motion.article>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
+                <div className="text-orange-500 mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                </div>
+                <p className="text-xl text-gray-700 mb-4">Bạn chưa có phòng trọ nào được lưu.</p>
+                <Link
+                  to="/posts"
+                  className="mt-2 bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition shadow-md font-medium inline-block"
+                >
+                  Khám phá các phòng trọ
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Loading indicator for infinite scroll */}
+        {hasMore && (
+          <div className="mt-12" ref={ref}>
+            <div className="flex justify-center">
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="bg-orange-500 rounded-full h-2 w-2"
+              />
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.2
+                }}
+                className="bg-orange-500 rounded-full h-2 w-2 mx-2"
+              />
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.4
+                }}
+                className="bg-orange-500 rounded-full h-2 w-2"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
