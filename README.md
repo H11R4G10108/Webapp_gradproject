@@ -1,4 +1,4 @@
-## Ongoing Project: Web application for managing articles on Facebook 
+Web application for managing rental room
 
 ## Techstack:
 
@@ -16,8 +16,15 @@ Posts:
 
 - Search function with filters (by date, etc.)
 
+- Compare room function
+
 - Bookmark
 
 User Management:
 
 - Login & Logout, account management (change username, email, password, reset password)
+
+Admin:
+
+- Dashboard view
+- Post CRUD 
