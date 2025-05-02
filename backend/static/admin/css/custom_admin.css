@@ -1,0 +1,26 @@
+/* static/admin/css/custom_admin.css */
+
+:root {
+    --primary-color: #ff8c00;
+    --secondary-color: #ff6a00;
+    --primary-dark: #e67e00;
+    --bg-light: #fff8f2;
+    --text-dark: #333;
+}
+
+/* Đổi màu nền sidebar thành trắng */
+.main-sidebar {
+    background-color: white !important;
+}
+
+/* Đổi màu nền + chữ khi menu item được chọn (active) */
+.nav-sidebar .nav-item > .nav-link.active {
+    background-color: orange !important;
+    color: white !important;
+}
+
+/* Đổi màu chữ khi hover */
+.nav-sidebar .nav-item > .nav-link:hover {
+    background-color: #ffa50080 !important; /* cam nhạt */
+    color: white !important;
+}

@@ -1,0 +1,274 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<!-- AdminLTE 3 styles and scripts -->
+<link rel="stylesheet" href="{% static 'admin-lte/dist/css/adminlte.min.css' %}">
+<script src="{% static 'admin-lte/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'admin-lte/dist/js/adminlte.min.js' %}"></script>
+
+<style>
+  .dashboard-card {
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    background-color: #fff;
+  }
+  .dashboard-card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: .75rem 1.25rem;
+    position: relative;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+  }
+  .dashboard-card-body {
+    padding: 1.25rem;
+  }
+  .info-box {
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    border-radius: .25rem;
+    background-color: #fff;
+    display: flex;
+    margin-bottom: 1rem;
+    min-height: 80px;
+    padding: .5rem;
+    position: relative;
+    width: 100%;
+  }
+  .info-box-icon {
+    border-radius: .25rem;
+    align-items: center;
+    display: flex;
+    font-size: 1.875rem;
+    justify-content: center;
+    text-align: center;
+    width: 70px;
+    background-color: #17a2b8;
+    color: #fff;
+  }
+  .info-box-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.8;
+    flex: 1;
+    padding: 0 10px;
+  }
+  .info-box-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .info-box-number {
+    display: block;
+    font-weight: 700;
+  }
+  .chart-container {
+    position: relative;
+    height: 300px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <h1>Rental Posts Dashboard</h1>
+  
+  <!-- Info boxes -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="info-box">
+        <span class="info-box-icon"><i class="far fa-file-alt"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Total Posts</span>
+          <span class="info-box-number">{{ total_posts }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Charts -->
+  <div class="row">
+    <!-- Posts by Ward (Pie Chart) -->
+    <div class="col-md-6">
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <h3 class="card-title">Total Posts by Ward</h3>
+        </div>
+        <div class="dashboard-card-body">
+          <div class="chart-container">
+            <canvas id="postsByWardChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Rental Amount by Ward (Bar Chart) -->
+    <div class="col-md-6">
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <h3 class="card-title">Rental Amounts by Ward</h3>
+        </div>
+        <div class="dashboard-card-body">
+          <div class="chart-container">
+            <canvas id="rentalsByWardChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <!-- Average Price by Ward (Bar Chart) -->
+    <div class="col-md-12">
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <h3 class="card-title">Average Rent Price by Ward</h3>
+        </div>
+        <div class="dashboard-card-body">
+          <div class="chart-container">
+            <canvas id="avgPriceByWardChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Data from Django view
+    const postsByWardData = {{ posts_by_ward|safe }};
+    const avgPriceByWardData = {{ avg_price_by_ward|safe }};
+    
+    // Extract labels and values
+    const wardLabels = postsByWardData.map(item => item.ward);
+    const postCounts = postsByWardData.map(item => item.count);
+    
+    const avgPriceLabels = avgPriceByWardData.map(item => item.ward);
+    const avgPrices = avgPriceByWardData.map(item => item.avg_price);
+    
+    // Color arrays for charts
+    const backgroundColors = [
+      'rgba(255, 99, 132, 0.6)',
+      'rgba(54, 162, 235, 0.6)',
+      'rgba(255, 206, 86, 0.6)',
+      'rgba(75, 192, 192, 0.6)',
+      'rgba(153, 102, 255, 0.6)',
+      'rgba(255, 159, 64, 0.6)',
+      'rgba(199, 199, 199, 0.6)',
+      'rgba(83, 102, 255, 0.6)',
+      'rgba(40, 159, 64, 0.6)',
+      'rgba(210, 199, 199, 0.6)',
+    ];
+    
+    // Create Pie Chart for Posts by Ward
+    const postsByWardChart = new Chart(
+      document.getElementById('postsByWardChart'),
+      {
+        type: 'pie',
+        data: {
+          labels: wardLabels,
+          datasets: [{
+            data: postCounts,
+            backgroundColor: backgroundColors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+            },
+            title: {
+              display: true,
+              text: 'Distribution of Posts by Ward'
+            }
+          }
+        }
+      }
+    );
+    
+    // Create Bar Chart for Rentals by Ward (using same data as pie chart but different visualization)
+    const rentalsByWardChart = new Chart(
+      document.getElementById('rentalsByWardChart'),
+      {
+        type: 'bar',
+        data: {
+          labels: wardLabels,
+          datasets: [{
+            label: 'Number of Rental Posts',
+            data: postCounts,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Posts'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Ward'
+              }
+            }
+          }
+        }
+      }
+    );
+    
+    // Create Bar Chart for Average Price by Ward
+    const avgPriceByWardChart = new Chart(
+      document.getElementById('avgPriceByWardChart'),
+      {
+        type: 'bar',
+        data: {
+          labels: avgPriceLabels,
+          datasets: [{
+            label: 'Average Rent Price (VND)',
+            data: avgPrices,
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Average Price (VND)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Ward'
+              }
+            }
+          }
+        }
+      }
+    );
+  });
+</script>
+{% endblock %}

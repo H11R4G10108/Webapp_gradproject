@@ -35,10 +35,8 @@ CORS_ALLOWED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
-    # General use templates & template tags (should appear first)
-    'adminlte3',
-    # Optional: Django admin theme (must be before django.contrib.admin)
-    'adminlte3_theme',
+    'jazzmin',
+    'chartjs',
     'core',
     'django_filters',
     'django.contrib.admin',
@@ -188,3 +186,66 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+JAZZMIN_SETTINGS = {
+    # === Titles ===
+    "site_title": "Trọ Đà Nẵng admin",
+    "site_header": "Trọ Đà Nẵng admin",
+    "site_brand": "Trọ Đà Nẵng admin",
+
+    "site_icon": None,
+
+    # Login screen welcome text
+    "welcome_sign": "Trọ Đà Nẵng admin xin chào!",
+
+    # Footer copyright
+    "copyright": "Trọ Đà Nẵng admin",
+
+    # Models to search from
+    "search_model": ["auth.Post"],
+
+    # Top navbar links
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Dashboard", "url": "/admin/dashboard/", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+        {"app": "core"},
+    ],
+
+    # User menu links
+    "usermenu_links": [
+        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {"model": "auth.user"}
+    ],
+
+    # Sidebar
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    "order_with_respect_to": ["auth", "core", "core.post", "core.user"],
+    "sidebar": "white",
+    # Icons
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+
+    # Related modal
+    "related_modal_active": False,
+
+    # UI tweaks
+    "custom_css": "admin/css/custom_admin.css",
+    "custom_js": None,
+    "use_google_fonts_cdn": True,
+    "show_ui_builder": True,
+
+    # Change view format
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+
+    }
+

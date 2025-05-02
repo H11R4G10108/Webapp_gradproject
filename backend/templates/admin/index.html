@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Trọ Đà Nẵng Admin{% endblock %}
+
+{% block content %}
+<div style="margin-top: 10px;">
+    <h1>Trọ Đà Nẵng xin chào!</h1>
+    <a href="{% url 'admin_dashboard' %}" class="dashboard-link">
+        Đến Dashboard ➜
+    </a>
+</div>
+{% endblock %}

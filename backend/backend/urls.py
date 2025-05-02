@@ -18,8 +18,13 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from core import views
+from core.admin import dashboard_view
 from core.views import custom_logout_view
+
+
 urlpatterns = [
+    path('admin/dashboard/', dashboard_view, name='admin_dashboard'),  # custom dashboard
     path('admin/', admin.site.urls),
     path("", include("core.urls")),
     path("logout/", custom_logout_view, name="logout"),

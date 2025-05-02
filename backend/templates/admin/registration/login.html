@@ -1,0 +1,66 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" href="{% static 'admin/admin-lte/dist/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'admin/admin-lte/plugins/fontawesome-free/css/all.min.css' %}">
+  <style>
+    body {
+      background-color: #fff3e0;
+    }
+    .login-box {
+      margin-top: 80px;
+    }
+    .card-primary.card-outline {
+      border-top: 3px solid #fd7e14;
+    }
+    .btn-primary {
+      background-color: #fd7e14;
+      border-color: #fd7e14;
+    }
+    .btn-primary:hover {
+      background-color: #e96b00;
+      border-color: #e96b00;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="login-box">
+  <div class="card card-primary card-outline">
+    <div class="card-header text-center">
+      <a href="{% url 'admin:index' %}" class="h1"><b>Trọ Đà Nẵng</b> Admin</a>
+    </div>
+    <div class="card-body">
+      {% if form.errors %}
+        <p class="text-danger text-center">Tài khoản hoặc mật khẩu không đúng!</p>
+      {% endif %}
+      <form method="post" action="{% url 'admin:login' %}">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          {{ form.username }}
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          {{ form.password }}
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8"></div>
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

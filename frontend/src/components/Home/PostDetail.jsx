@@ -4,7 +4,7 @@ import axios from "axios";
 import useAxios from "../../utils/useAxios";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../context/AuthContext";
-import { 
+import {
   ArrowLeftIcon,
   BookmarkIcon as BookmarkOutline,
   PhoneIcon,
@@ -15,23 +15,23 @@ import {
   HomeIcon,
   UserIcon,
   ShareIcon,
-  ClockIcon
+  ClockIcon,
 } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkSolid } from "@heroicons/react/24/solid";
 import { motion } from "framer-motion";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import iconUrl from '../../assets/icon.png';
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
-
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import iconUrl from "../../assets/icon.png";
+import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+import Navbar from "../Navbar/Navbar";
 const markerIcon = L.icon({
   iconUrl,
   shadowUrl,
   iconSize: [35, 35],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
 
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -42,7 +42,7 @@ export default function PostDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [position, setPosition] = useState([16.047079, 108.206230]); // Default position: Da Nang
+  const [position, setPosition] = useState([16.047079, 108.20623]); // Default position: Da Nang
   const [mapLoaded, setMapLoaded] = useState(false);
   const { user } = useContext(AuthContext);
   const api = useAxios();
@@ -56,7 +56,7 @@ export default function PostDetail() {
         setLoading(true);
         const response = await axios.get(`${BASE_URL}/post-detail/${postId}/`);
         setPost(response.data);
-        
+
         // Extract coordinates if available
         if (response.data.latitude && response.data.longitude) {
           setPosition([response.data.latitude, response.data.longitude]);
@@ -64,7 +64,7 @@ export default function PostDetail() {
           // If no coordinates, try to geocode the address
           geocodeAddress(response.data);
         }
-        
+
         // Check if post is bookmarked if user is logged in
         if (userId) {
           checkBookmarkStatus();
@@ -83,22 +83,25 @@ export default function PostDetail() {
   // Attempt to geocode the address if coordinates aren't provided
   const geocodeAddress = async (postData) => {
     if (!postData) return;
-    
+
     const address = `${postData.street_address}, ${postData.ward}, ${postData.district}, Đà Nẵng, Việt Nam`;
-    
+
     try {
       // Using Nominatim OpenStreetMap geocoding service
-      const response = await axios.get('https://nominatim.openstreetmap.org/search', {
-        params: {
-          q: address,
-          format: 'json',
-          limit: 1
-        },
-        headers: {
-          'User-Agent': 'TroDaNang Website' // Required by Nominatim usage policy
+      const response = await axios.get(
+        "https://nominatim.openstreetmap.org/search",
+        {
+          params: {
+            q: address,
+            format: "json",
+            limit: 1,
+          },
+          headers: {
+            "User-Agent": "TroDaNang Website",
+          },
         }
-      });
-      
+      );
+
       if (response.data && response.data.length > 0) {
         const { lat, lon } = response.data[0];
         setPosition([parseFloat(lat), parseFloat(lon)]);
@@ -119,13 +122,13 @@ export default function PostDetail() {
       "Hải Châu": [16.0472, 108.2099],
       "Thanh Khê": [16.0639, 108.1844],
       "Sơn Trà": [16.1065, 108.2537],
-      "Ngũ Hành Sơn": [16.0210, 108.2480],
+      "Ngũ Hành Sơn": [16.021, 108.248],
       "Cẩm Lệ": [16.0058, 108.2008],
       "Liên Chiểu": [16.0981, 108.1385],
-      "Hòa Vang": [16.0639, 108.0132]
+      "Hòa Vang": [16.0639, 108.0132],
     };
-    
-    setPosition(districtCoordinates[district] || [16.047079, 108.206230]);
+
+    setPosition(districtCoordinates[district] || [16.047079, 108.20623]);
   };
 
   // Update map when position changes
@@ -138,10 +141,12 @@ export default function PostDetail() {
   // Check if post is bookmarked
   const checkBookmarkStatus = async () => {
     try {
-      const response = await api.get(`${BASE_URL}/bookmark-for-check/?userid=${userId}`);
+      const response = await api.get(
+        `${BASE_URL}/bookmark-for-check/?userid=${userId}`
+      );
       const bookmarks = response.data || [];
       const isBookmarked = bookmarks.some(
-        bookmark => bookmark.post && bookmark.post.postid === parseInt(postId)
+        (bookmark) => bookmark.post && bookmark.post.postid === parseInt(postId)
       );
       setIsBookmarked(isBookmarked);
     } catch (error) {
@@ -160,7 +165,7 @@ export default function PostDetail() {
         showCancelButton: true,
         cancelButtonText: "Đóng",
         background: "#fff3e0",
-        iconColor: "#ff7043"
+        iconColor: "#ff7043",
       }).then((result) => {
         if (result.isConfirmed) {
           // Navigate to login page
@@ -172,7 +177,7 @@ export default function PostDetail() {
 
     try {
       const response = await api.post(`${BASE_URL}/bookmark-toggle/${postId}/`);
-      
+
       if (response.status === 201) {
         setIsBookmarked(true);
         Swal.fire({
@@ -185,7 +190,7 @@ export default function PostDetail() {
           width: "25em",
           background: "#fff3e0",
           iconColor: "#ff7043",
-          icon: "success"
+          icon: "success",
         });
       } else if (response.status === 204) {
         setIsBookmarked(false);
@@ -199,7 +204,7 @@ export default function PostDetail() {
           width: "25em",
           background: "#fff3e0",
           iconColor: "#ff7043",
-          icon: "info"
+          icon: "info",
         });
       }
     } catch (error) {
@@ -214,7 +219,7 @@ export default function PostDetail() {
         showCloseButton: true,
         showConfirmButton: false,
         background: "#fff3e0",
-        iconColor: "#f44336"
+        iconColor: "#f44336",
       });
     }
   };
@@ -236,13 +241,15 @@ export default function PostDetail() {
   // Share post
   const sharePost = () => {
     if (navigator.share) {
-      navigator.share({
-        title: post?.content,
-        text: `Phòng trọ tại ${post?.street_address}, ${post?.ward}, ${post?.district}`,
-        url: window.location.href
-      }).catch(err => {
-        console.error("Error sharing:", err);
-      });
+      navigator
+        .share({
+          title: post?.content,
+          text: `Phòng trọ tại ${post?.street_address}, ${post?.ward}, ${post?.district}`,
+          url: window.location.href,
+        })
+        .catch((err) => {
+          console.error("Error sharing:", err);
+        });
     } else {
       // Fallback for browsers that don't support Web Share API
       navigator.clipboard.writeText(window.location.href).then(() => {
@@ -256,16 +263,19 @@ export default function PostDetail() {
           width: "25em",
           background: "#fff3e0",
           iconColor: "#ff7043",
-          icon: "success"
+          icon: "success",
         });
       });
     }
   };
 
-  // Animation variants
   const contentVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
   };
 
   if (loading) {
@@ -276,38 +286,38 @@ export default function PostDetail() {
             <motion.div
               animate={{
                 scale: [1, 1.2, 1],
-                opacity: [0.5, 1, 0.5]
+                opacity: [0.5, 1, 0.5],
               }}
               transition={{
                 duration: 1.5,
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: "easeInOut",
               }}
               className="bg-orange-500 rounded-full h-3 w-3"
             />
             <motion.div
               animate={{
                 scale: [1, 1.2, 1],
-                opacity: [0.5, 1, 0.5]
+                opacity: [0.5, 1, 0.5],
               }}
               transition={{
                 duration: 1.5,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: 0.2
+                delay: 0.2,
               }}
               className="bg-orange-500 rounded-full h-3 w-3"
             />
             <motion.div
               animate={{
                 scale: [1, 1.2, 1],
-                opacity: [0.5, 1, 0.5]
+                opacity: [0.5, 1, 0.5],
               }}
               transition={{
                 duration: 1.5,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: 0.4
+                delay: 0.4,
               }}
               className="bg-orange-500 rounded-full h-3 w-3"
             />
@@ -323,14 +333,27 @@ export default function PostDetail() {
       <div className="bg-gray-50 min-h-screen flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-xl shadow-md max-w-md mx-auto">
           <div className="text-red-500 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Đã xảy ra lỗi</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Đã xảy ra lỗi
+          </h2>
           <p className="text-gray-600 mb-6">{error}</p>
-          <Link 
-            to="/article" 
+          <Link
+            to="/article"
             className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition shadow-md font-medium inline-flex items-center"
           >
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
@@ -346,14 +369,29 @@ export default function PostDetail() {
       <div className="bg-gray-50 min-h-screen flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-xl shadow-md max-w-md mx-auto">
           <div className="text-orange-500 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Không tìm thấy thông tin</h2>
-          <p className="text-gray-600 mb-6">Phòng trọ này không tồn tại hoặc đã bị xóa.</p>
-          <Link 
-            to="/article" 
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Không tìm thấy thông tin
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Phòng trọ này không tồn tại hoặc đã bị xóa.
+          </p>
+          <Link
+            to="/article"
             className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition shadow-md font-medium inline-flex items-center"
           >
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
@@ -366,16 +404,21 @@ export default function PostDetail() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+      <Navbar />
       <div className="container mx-auto px-4 py-12">
         {/* Breadcrumb */}
         <nav className="mb-8">
           <ol className="flex text-gray-500 text-sm">
             <li className="flex items-center">
-              <Link to="/" className="hover:text-orange-500">Trang chủ</Link>
+              <Link to="/" className="hover:text-orange-500">
+                Trang chủ
+              </Link>
               <span className="mx-2">/</span>
             </li>
             <li className="flex items-center">
-              <Link to="/article" className="hover:text-orange-500">Phòng trọ</Link>
+              <Link to="/article" className="hover:text-orange-500">
+                Phòng trọ
+              </Link>
               <span className="mx-2">/</span>
             </li>
             <li className="text-orange-500 truncate max-w-xs">
@@ -386,7 +429,7 @@ export default function PostDetail() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <motion.div 
+          <motion.div
             className="lg:col-span-2"
             variants={contentVariants}
             initial="hidden"
@@ -420,7 +463,7 @@ export default function PostDetail() {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-3 mb-4">
                   <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
                     {post.district}
@@ -432,7 +475,7 @@ export default function PostDetail() {
                     {post.area}
                   </span>
                 </div>
-                
+
                 <div className="text-2xl font-bold text-orange-500">
                   {formatPrice(post.price)} VNĐ/tháng
                 </div>
@@ -451,70 +494,88 @@ export default function PostDetail() {
                 <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">
                   Thông tin chi tiết
                 </h2>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-8">
                   <div className="flex items-center">
                     <MapPinIcon className="h-5 w-5 mr-3 text-orange-500" />
                     <div>
-                      <span className="text-gray-600 block text-sm">Địa chỉ</span>
+                      <span className="text-gray-600 block text-sm">
+                        Địa chỉ
+                      </span>
                       <span className="text-gray-800 font-medium">
                         {post.street_address}, {post.ward}, {post.district}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <BanknotesIcon className="h-5 w-5 mr-3 text-orange-500" />
                     <div>
-                      <span className="text-gray-600 block text-sm">Giá phòng</span>
+                      <span className="text-gray-600 block text-sm">
+                        Giá phòng
+                      </span>
                       <span className="text-gray-800 font-medium">
                         {formatPrice(post.price)} VNĐ/tháng
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <Squares2X2Icon className="h-5 w-5 mr-3 text-orange-500" />
                     <div>
-                      <span className="text-gray-600 block text-sm">Diện tích</span>
+                      <span className="text-gray-600 block text-sm">
+                        Diện tích
+                      </span>
                       <span className="text-gray-800 font-medium">
                         {post.area}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <ClockIcon className="h-5 w-5 mr-3 text-orange-500" />
                     <div>
-                      <span className="text-gray-600 block text-sm">Ngày đăng</span>
+                      <span className="text-gray-600 block text-sm">
+                        Ngày đăng
+                      </span>
                       <span className="text-gray-800 font-medium">
                         {formatDate(post.p_date)}
                       </span>
                     </div>
                   </div>
                 </div>
-                
+
                 <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">
                   Mô tả chi tiết
                 </h2>
-                
+
                 <div className="prose max-w-none mb-8">
                   <p className="whitespace-pre-line text-gray-700">
                     {post.description || "Không có mô tả chi tiết"}
                   </p>
                 </div>
-                
+
                 {/* Utilities Section - can be expanded based on API data */}
                 <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">
                   Tiện ích
                 </h2>
-                
+
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
                   {post.utilities && post.utilities.length > 0 ? (
                     post.utilities.map((utility, index) => (
                       <div key={index} className="flex items-center">
-                        <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <svg
+                          className="h-5 w-5 text-green-500 mr-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
                         </svg>
                         <span className="text-gray-700">{utility}</span>
                       </div>
@@ -527,7 +588,6 @@ export default function PostDetail() {
                 </div>
               </div>
             </div>
-            
           </motion.div>
 
           {/* Sidebar */}
@@ -537,16 +597,16 @@ export default function PostDetail() {
             animate="visible"
             transition={{ delay: 0.2 }}
           >
-                        {/* Map Section with Leaflet */}
-                        <div className="bg-white shadow-md rounded-xl overflow-hidden p-6">
+            {/* Map Section with Leaflet */}
+            <div className="bg-white shadow-md rounded-xl overflow-hidden p-6">
               <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2 flex items-center">
                 <MapPinIcon className="h-5 w-5 mr-2 text-orange-500" />
                 Vị trí trên bản đồ
               </h2>
               <div className="h-80 rounded-lg overflow-hidden">
-                <MapContainer 
-                  center={position} 
-                  zoom={15} 
+                <MapContainer
+                  center={position}
+                  zoom={15}
                   style={{ height: "100%", width: "100%" }}
                   whenCreated={(map) => {
                     mapRef.current = map;
@@ -561,8 +621,12 @@ export default function PostDetail() {
                     <Popup>
                       <div className="text-center">
                         <strong className="block mb-1">{post.content}</strong>
-                        <span className="text-sm block">{formatPrice(post.price)} VNĐ/tháng</span>
-                        <span className="text-xs text-gray-500 block mt-1">{post.street_address}, {post.ward}, {post.district}</span>
+                        <span className="text-sm block">
+                          {formatPrice(post.price)} VNĐ/tháng
+                        </span>
+                        <span className="text-xs text-gray-500 block mt-1">
+                          {post.street_address}, {post.ward}, {post.district}
+                        </span>
                       </div>
                     </Popup>
                   </Marker>
@@ -570,7 +634,9 @@ export default function PostDetail() {
               </div>
               <div className="mt-4 text-sm text-gray-500 italic flex items-center">
                 <MapPinIcon className="h-4 w-4 mr-1 inline text-orange-500" />
-                <span className="text-xs">Vị trí hiển thị trên bản đồ có thể không chính xác 100%</span>
+                <span className="text-xs">
+                  Vị trí hiển thị trên bản đồ có thể không chính xác 100%
+                </span>
               </div>
             </div>
             {/* Contact Information */}
@@ -583,39 +649,43 @@ export default function PostDetail() {
                   Liên hệ ngay để thuê phòng
                 </p>
               </div>
-              
+
               <div className="p-6">
                 <div className="flex items-center mb-6">
                   <div className="bg-orange-100 rounded-full p-3 mr-4">
                     <UserIcon className="h-6 w-6 text-orange-500" />
                   </div>
                   <div>
-                    <span className="text-gray-600 text-sm block">Người cho thuê</span>
+                    <span className="text-gray-600 text-sm block">
+                      Người cho thuê
+                    </span>
                     <span className="font-medium text-gray-800">
                       {post.owner_name || "Chủ nhà"}
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center mb-6">
                   <div className="bg-orange-100 rounded-full p-3 mr-4">
                     <PhoneIcon className="h-6 w-6 text-orange-500" />
                   </div>
                   <div>
-                    <span className="text-gray-600 text-sm block">Số điện thoại</span>
+                    <span className="text-gray-600 text-sm block">
+                      Số điện thoại
+                    </span>
                     <span className="font-medium text-gray-800">
                       {post.contact_info}
                     </span>
                   </div>
                 </div>
-                
+
                 <a
                   href={`tel:${post.contact_info}`}
                   className="block w-full bg-orange-500 text-white text-center px-6 py-3 rounded-lg hover:bg-orange-600 transition font-medium mb-3"
                 >
                   Gọi ngay
                 </a>
-                
+
                 <a
                   href={`sms:${post.contact_info}`}
                   className="block w-full border-2 border-orange-500 text-orange-500 text-center px-6 py-3 rounded-lg hover:bg-orange-50 transition font-medium"
@@ -624,7 +694,7 @@ export default function PostDetail() {
                 </a>
               </div>
             </div>
-            
+
             {/* Similar Posts (Placeholder) */}
             <div className="bg-white shadow-md rounded-xl overflow-hidden">
               <div className="p-6 border-b border-gray-100">
@@ -632,7 +702,7 @@ export default function PostDetail() {
                   Phòng trọ tương tự
                 </h2>
               </div>
-              
+
               <div className="p-6">
                 <div className="text-center py-8 text-gray-500">
                   <HomeIcon className="h-12 w-12 mx-auto text-gray-300 mb-3" />
@@ -644,13 +714,11 @@ export default function PostDetail() {
             {/* Directions */}
             <div className="bg-white shadow-md rounded-xl overflow-hidden mt-6">
               <div className="p-6 border-b border-gray-100">
-                <h2 className="text-xl font-bold text-gray-800">
-                  Chỉ đường
-                </h2>
+                <h2 className="text-xl font-bold text-gray-800">Chỉ đường</h2>
               </div>
-              
+
               <div className="p-6">
-                <a 
+                <a
                   href={`https://www.google.com/maps/dir/?api=1&destination=${position[0]},${position[1]}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -658,8 +726,8 @@ export default function PostDetail() {
                 >
                   Chỉ đường bằng Google Maps
                 </a>
-                
-                <a 
+
+                <a
                   href={`https://www.openstreetmap.org/directions?from=&to=${position[0]}%2C${position[1]}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -671,11 +739,11 @@ export default function PostDetail() {
             </div>
           </motion.div>
         </div>
-        
+
         {/* Back to list button */}
         <div className="mt-8 text-center">
-          <Link 
-            to="/article" 
+          <Link
+            to="/article"
             className="inline-flex items-center bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition font-medium"
           >
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
