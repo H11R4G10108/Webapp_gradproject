@@ -4,6 +4,7 @@ from core import api_views
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordResetDoneView, PasswordResetCompleteView
 from core.api_views import UserProfileView, PostListView, BookmarkListView, ToggleBookmarkView, BookmarkListViewForMark, PostViewSet
+from core import views
 
 router = DefaultRouter()
 router.register(r'users', api_views.UserViewSet)
@@ -22,4 +23,5 @@ urlpatterns = [
     path('api/bookmark-for-check/', BookmarkListViewForMark.as_view(), name='bookmark-check'),
     path('api/bookmark-toggle/<int:postid>/', ToggleBookmarkView.as_view(), name='toggle-bookmark'),
     path('', api_views.getRoutes),
+
 ]
