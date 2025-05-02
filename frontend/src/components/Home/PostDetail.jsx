@@ -24,7 +24,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import iconUrl from '../../assets/icon.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
-
+import Navbar from "../Navbar/Navbar";
 const markerIcon = L.icon({
   iconUrl,
   shadowUrl,
@@ -95,7 +95,7 @@ export default function PostDetail() {
           limit: 1
         },
         headers: {
-          'User-Agent': 'TroDaNang Website' // Required by Nominatim usage policy
+          'User-Agent': 'TroDaNang Website'
         }
       });
       
@@ -262,7 +262,6 @@ export default function PostDetail() {
     }
   };
 
-  // Animation variants
   const contentVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
@@ -271,6 +270,7 @@ export default function PostDetail() {
   if (loading) {
     return (
       <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+        <Navbar />
         <div className="flex flex-col items-center">
           <div className="flex space-x-2">
             <motion.div

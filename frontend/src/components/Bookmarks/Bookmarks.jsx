@@ -1,7 +1,7 @@
 import Navbar from '../Navbar/Navbar'
 import Header from '../Header/Header'
 import BookmarkList from './BookmarkList'
-
+import { useEffect } from 'react';
 export default function Bookmarks() {
       useEffect(() => {
         // Scroll to top when component mounts
