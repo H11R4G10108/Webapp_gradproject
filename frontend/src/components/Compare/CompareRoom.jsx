@@ -14,8 +14,6 @@ import {
   PhoneIcon,
   CurrencyDollarIcon,
   ArrowsRightLeftIcon,
-  CheckCircleIcon,
-  XCircleIcon,
   SquaresPlusIcon
 } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
@@ -41,22 +39,8 @@ export default function CompareRoom() {
     { id: "all", name: "Tất cả" },
     { id: "price", name: "Giá thuê" },
     { id: "area", name: "Diện tích" },
-    { id: "location", name: "Vị trí" },
-    { id: "utilities", name: "Tiện ích" }
+    { id: "location", name: "Vị trí" }
   ];
-  
-  // Mock utilities for each room (in a real app, these would come from the API)
-  const utilities = {
-    "wifi": "Wifi",
-    "air_conditioning": "Điều hòa",
-    "parking": "Chỗ để xe",
-    "security": "An ninh",
-    "water_heater": "Nước nóng",
-    "refrigerator": "Tủ lạnh",
-    "washing_machine": "Máy giặt",
-    "kitchen": "Nhà bếp",
-    "private_bathroom": "Phòng tắm riêng"
-  };
   
   useEffect(() => {
     // Load comparison list from localStorage
@@ -202,22 +186,6 @@ export default function CompareRoom() {
   // Format price with commas
   const formatPrice = (price) => {
     return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || "N/A";
-  };
-  
-  // Get random utilities for demo (in a real app, these would come from the API)
-  const getRandomUtilities = (postId) => {
-    // Using postId to ensure consistent results for the same room
-    const seed = parseInt(postId.toString().slice(-3));
-    const allUtilities = Object.keys(utilities);
-    const result = {};
-    
-    allUtilities.forEach(util => {
-      // Generate a deterministic boolean based on the seed and utility
-      const hasUtility = (seed + util.length) % 3 !== 0;
-      result[util] = hasUtility;
-    });
-    
-    return result;
   };
   
   // Handle feature filter change
@@ -438,42 +406,6 @@ export default function CompareRoom() {
                       <td key={`empty-contact-${index}`} className="py-4 px-3"></td>
                     ))}
                   </tr>
-                )}
-                
-                {/* Utilities Section */}
-                {(selectedFeature === 'all' || selectedFeature === 'utilities') && (
-                  <>
-                    <tr className="bg-gray-50">
-                      <td colSpan={4} className="py-3 px-3 text-gray-700 font-semibold">
-                        Tiện ích
-                      </td>
-                    </tr>
-                    
-                    {Object.entries(utilities).map(([key, label]) => (
-                      <tr key={key} className="hover:bg-orange-50">
-                        <td className="py-3 px-3 text-gray-700">
-                          {label}
-                        </td>
-                        
-                        {compareItems.map((room) => {
-                          const roomUtilities = getRandomUtilities(room.postid);
-                          return (
-                            <td key={`${key}-${room.postid}`} className="py-3 px-3">
-                              {roomUtilities[key] ? (
-                                <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                              ) : (
-                                <XCircleIcon className="h-5 w-5 text-red-500" />
-                              )}
-                            </td>
-                          );
-                        })}
-                        
-                        {Array(3 - compareItems.length).fill(0).map((_, index) => (
-                          <td key={`empty-${key}-${index}`} className="py-3 px-3"></td>
-                        ))}
-                      </tr>
-                    ))}
-                  </>
                 )}
               </tbody>
             </table>
