@@ -1,10 +1,221 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<style>
+  .dashboard-card {
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    padding: 15px;
+  }
+  .info-box {
+    background: #fd7e14; /* Orange */
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .info-box-number {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <h1>Dashboard</h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="info-box">
+        <div class="info-box-content">
+          <span class="info-box-text">Total Posts</span>
+          <span class="info-box-number">{{ total_posts }}</span>
+        </div>
+      </div>
+    </div>
+        <div class="col-md-6">
+      <div class="info-box">
+        <div class="info-box-content">
+          <span class="info-box-text">Total Users</span>
+          <span class="info-box-number">{{ total_users }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="dashboard-card">
+        <h3>Posts by District</h3>
+        <div class="chart-container">
+          <canvas id="postsByDistrictChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="dashboard-card">
+        <h3>Rental Amounts by District</h3>
+        <div class="chart-container">
+          <canvas id="rentalsByDistrictChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="dashboard-card">
+        <h3>Average Rent Price by District</h3>
+        <div class="chart-container">
+          <canvas id="avgPriceByDistrictChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Data from Django view
+    const postsByDistrictData = {{ posts_by_district|safe }};
+    const avgPriceByDistrictData = {{ avg_price_by_district|safe }};
+
+    // Extract labels and values
+    const districtLabels = postsByDistrictData.map(item => item.district);
+    const postCounts = postsByDistrictData.map(item => item.count);
+
+    const avgPriceLabels = avgPriceByDistrictData.map(item => item.district);
+    const avgPrices = avgPriceByDistrictData.map(item => item.avg_price);
+
+    // Color arrays for charts
+    const backgroundColors = [
+      'rgba(255, 99, 132, 0.6)',
+      'rgba(54, 162, 235, 0.6)',
+      'rgba(255, 206, 86, 0.6)',
+      'rgba(75, 192, 192, 0.6)',
+      'rgba(153, 102, 255, 0.6)',
+      'rgba(255, 159, 64, 0.6)',
+      'rgba(199, 199, 199, 0.6)',
+      'rgba(83, 102, 255, 0.6)',
+      'rgba(40, 159, 64, 0.6)',
+      'rgba(210, 199, 199, 0.6)',
+    ];
+
+    // Create Pie Chart for Posts by District
+    const postsByDistrictChart = new Chart(
+      document.getElementById('postsByDistrictChart'),
+      {
+        type: 'pie',
+        data: {
+          labels: districtLabels,
+          datasets: [{
+            data: postCounts,
+            backgroundColor: backgroundColors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+            },
+            title: {
+              display: true,
+              text: 'Distribution of Posts by District'
+            }
+          }
+        }
+      }
+    );
+
+    // Create Bar Chart for Rentals by District (using same data as pie chart but different visualization)
+    const rentalsByDistrictChart = new Chart(
+      document.getElementById('rentalsByDistrictChart'),
+      {
+        type: 'bar',
+        data: {
+          labels: districtLabels,
+          datasets: [{
+            label: 'Number of Rental Posts',
+            data: postCounts,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Posts'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'District'
+              }
+            }
+          }
+        }
+      }
+    );
+
+    // Create Bar Chart for Average Price by District
+    const avgPriceByDistrictChart = new Chart(
+      document.getElementById('avgPriceByDistrictChart'),
+      {
+        type: 'bar',
+        data: {
+          labels: avgPriceLabels,
+          datasets: [{
+            label: 'Average Rent Price (VND)',
+            data: avgPrices,
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Average Price (VND)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'District'
+              }
+            }
+          }
+        }
+      }
+    );
+  });
+</script>
+{% endblock %}
