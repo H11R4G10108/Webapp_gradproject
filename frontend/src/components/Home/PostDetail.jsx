@@ -11,8 +11,6 @@ import {
   MapPinIcon,
   Squares2X2Icon,
   BanknotesIcon,
-  CalendarIcon,
-  HomeIcon,
   UserIcon,
   ShareIcon,
   ClockIcon,
@@ -164,7 +162,7 @@ export default function PostDetail() {
         confirmButtonText: "Đăng nhập",
         showCancelButton: true,
         cancelButtonText: "Đóng",
-        background: "#fff3e0",
+        background: "#ED936A",
         iconColor: "#ff7043",
       }).then((result) => {
         if (result.isConfirmed) {

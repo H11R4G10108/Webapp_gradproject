@@ -1,12 +1,9 @@
-import { jwtDecode } from "jwt-decode";
 import { useLocation, matchPath } from "react-router-dom";
 import { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import "./Header.css";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/16/solid";
-import { motion } from "framer-motion";
 export default function Header() {
   let location = useLocation();
   let navigate = useNavigate();
@@ -14,7 +11,6 @@ export default function Header() {
   const getTitle = () => {
     const path = location.pathname;
     if (path === "/") return "Home";
-    if (path.includes("/crawl-bot")) return "Crawl bot";
     if (path.includes("/bookmarks")) return "Bookmarks";
     if (path.includes("/settings/account-information")) return "Thông tin tài khoản";
     if (path.includes("/settings/change-password")) return "Đổi mật khẩu";

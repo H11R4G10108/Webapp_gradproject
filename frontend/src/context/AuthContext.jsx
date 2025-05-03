@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 
+// Use environment variable for API base URL
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 export const AuthContext = createContext("");
 
 export const AuthProvider = ({ children }) => {
@@ -24,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const loginUser = async (email, password) => {
-    const response = await fetch("http://127.0.0.1:8000/api/token/", {
+    const response = await fetch(`${BASE_URL}/api/token/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const registerUser = async (email, username, password1, password2) => {
-    const response = await fetch("http://127.0.0.1:8000/api/register/", {
+    const response = await fetch(`${BASE_URL}/api/register/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
