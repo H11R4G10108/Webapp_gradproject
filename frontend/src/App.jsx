@@ -17,6 +17,7 @@ import LandingPage from "./components/Home/LandingPage.jsx";
 import CompareRoom from "./components/Compare/CompareRoom.jsx";
 import Register from "./components/Register/Register.jsx";
 import About from "./components/About/About";
+
 function App() {
   return (
     <AuthProvider>

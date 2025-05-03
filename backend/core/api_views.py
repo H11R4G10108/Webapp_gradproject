@@ -1,4 +1,5 @@
 import django_filters
+from rest_framework.filters import SearchFilter
 
 from .models import Post, UserBookmarkPost, User
 from .serializers import UserSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, PostSerializer, UserBookmarkPostSerializer, ChangeUserInfoSerializer, RegisterSerializer
@@ -131,6 +132,7 @@ class PostViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = PostFilter
+    search_fields = ['content']
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -148,14 +150,13 @@ class PostPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 20  # Optional: Limit max page size
 
-# Create the API view
 class PostListView(ListAPIView):
     queryset = Post.objects.all().order_by('-p_date')  # Most recent first by default
     serializer_class = PostSerializer
     pagination_class = PostPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]  # Include SearchFilter here
     filterset_class = PostFilter
-    search_fields = ['content', 'street_address', 'ward', 'district']
+    search_fields = ['content']
 
 
 
