@@ -78,3 +78,27 @@ class UserBookmarkPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBookmarkPost
         fields = ['markid', 'userid', 'post']  # Include `post` instead of just `postid`
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(
+        write_only=True, required=True, validators=[validate_password])
+    password1 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'password1', 'password2')
+
+    def validate(self, attrs):
+        if attrs['password1'] != attrs['password2']:
+            raise serializers.ValidationError(
+                {"password1": "Password fields didn't match."})
+        return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email']
+        )
+        user.set_password(validated_data['password1'])
+        user.save()
+        return user

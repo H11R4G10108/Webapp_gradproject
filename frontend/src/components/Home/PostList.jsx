@@ -21,7 +21,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import SkeletonLoader from "../SkeletonLoader/SkeletonLoader";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import BackToTop from "@/components/ui/backtotop";
 import SearchBar from "../SearchPage/SearchBar";

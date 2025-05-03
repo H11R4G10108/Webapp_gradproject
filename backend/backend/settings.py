@@ -201,9 +201,6 @@ JAZZMIN_SETTINGS = {
     # Footer copyright
     "copyright": "Trọ Đà Nẵng admin",
 
-    # Models to search from
-    "search_model": ["auth.Post"],
-
     # Top navbar links
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},

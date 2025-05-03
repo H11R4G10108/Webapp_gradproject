@@ -1,6 +1,5 @@
 import useAxios from "../../utils/useAxios";
 import "./ChangePassword.css"
-import Sidebar from "../Sidebar/Sidebar"
 import Header from "../Header/Header"
 import Sidebar2 from "./Sidebar2"
 import Swal from "sweetalert2";

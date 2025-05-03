@@ -1,7 +1,7 @@
 import django_filters
 
 from .models import Post, UserBookmarkPost, User
-from .serializers import UserSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, PostSerializer, UserBookmarkPostSerializer, ChangeUserInfoSerializer
+from .serializers import UserSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, PostSerializer, UserBookmarkPostSerializer, ChangeUserInfoSerializer, RegisterSerializer
 from django.http import JsonResponse
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import api_view, permission_classes
@@ -191,3 +191,8 @@ class ToggleBookmarkView(APIView):
             return Response({"message": "Bookmark removed"}, status=status.HTTP_204_NO_CONTENT)
 
         return Response({"message": "Bookmark added"}, status=status.HTTP_201_CREATED)
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer

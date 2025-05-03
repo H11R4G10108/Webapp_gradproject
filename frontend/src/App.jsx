@@ -1,7 +1,6 @@
 import "./App.css";
 import Login from "./components/Login/Login";
 import Home from "./components/Home/Home";
-import CrawlBot from "./components/CrawlBot/CrawlBot.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { Routes, Route } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute.jsx";
@@ -14,7 +13,6 @@ import PasswordReset from "./components/Settings/PasswordReset.jsx";
 import PostDetail from "./components/Home/PostDetail.jsx";
 import Bookmarks from "./components/Bookmarks/Bookmarks.jsx";
 import SearchResult from "./components/SearchPage/SearchResult.jsx";
-import NewFunc from "./components/Home/new.jsx";
 import LandingPage from "./components/Home/LandingPage.jsx";
 import CompareRoom from "./components/Compare/CompareRoom.jsx";
 import Register from "./components/Register/Register.jsx";
@@ -34,14 +32,6 @@ function App() {
           element={
             <PrivateRoute>
               <Bookmarks />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/crawl-bot"
-          element={
-            <PrivateRoute>
-              <CrawlBot />
             </PrivateRoute>
           }
         />

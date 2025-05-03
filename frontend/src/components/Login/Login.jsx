@@ -1,10 +1,16 @@
-import { useContext, useEffect } from "react";
-// import Navbar from "../../components/Navbar/Navbar";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import Navbar from "../../components/Navbar/Navbar";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const { loginUser } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const submitHandler = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
@@ -13,6 +19,7 @@ export default function Login() {
     console.log(email);
     console.log(password);
   };
+
   return (
     <>
       <Navbar />
@@ -43,16 +50,25 @@ export default function Login() {
                 </div>
                 <div className="mt-5">
                   <p className="font-medium text-slate-700 pb-2">Mật khẩu</p>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Nhập mật khẩu"
-                    aria-invalid="false"
-                    className="w-full py-3 border-b-2 border-slate-200 px-3 focus:outline-none focus:border-slate-500 hover:shadow"
-                    autoComplete="current-password"
-                    maxLength="128"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      name="password"
+                      placeholder="Nhập mật khẩu"
+                      aria-invalid="false"
+                      className="w-full py-3 border-b-2 border-slate-200 px-3 focus:outline-none focus:border-slate-500 hover:shadow"
+                      autoComplete="current-password"
+                      maxLength="128"
+                    />
+                    <button 
+                      type="button"
+                      className="absolute right-2 top-3 text-gray-500 focus:outline-none" 
+                      onClick={togglePasswordVisibility}
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
                 </div>
               </div>
               <a

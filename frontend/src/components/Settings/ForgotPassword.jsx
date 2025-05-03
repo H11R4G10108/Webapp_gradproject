@@ -1,11 +1,11 @@
 import { useState } from "react";
-import useAxios from "../../utils/useAxios";
+import axios from "axios";
 import Swal from "sweetalert2";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function ForgotPassword() {
-  const api = useAxios();
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState("");
 
@@ -13,8 +13,8 @@ export default function ForgotPassword() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("email", email);
-    const response = await api
-      .post("/password_reset/", formData)
+    const response = await axios
+      .post(`${BASE_URL}/password_reset/`, formData)
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
@@ -32,13 +32,9 @@ export default function ForgotPassword() {
         }
       })
       .catch((error) => {
-        console.log(error);
-        setErrors(error.response.data);
+        setErrors(error.response);
         if (error.response) {
           console.log("Error response:", error.response);
-          console.log("Error data:", error.response.data);
-          console.log("Error status:", error.response.status);
-          console.log("Error headers:", error.response.headers);
         } else if (error.request) {
           console.log("Error request:", error.request);
         } else {

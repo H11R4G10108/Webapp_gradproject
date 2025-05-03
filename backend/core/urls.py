@@ -12,6 +12,7 @@ router.register(r'post-detail', api_views.PostViewSet)
 
 urlpatterns = [
     path('api/', include((router.urls, 'api'))),
+    path('api/register/', api_views.RegisterView.as_view(), name='auth_register'),
     path('api/token/', api_views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/change-password/', api_views.ChangePasswordView.as_view(), name='change_password'),

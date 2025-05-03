@@ -1,5 +1,3 @@
-import Sidebar from '../Sidebar/Sidebar'
-import Header from '../Header/Header'
 import PostList from './PostList'
 import Navbar from '../Navbar/Navbar'
 export default function Home() {
