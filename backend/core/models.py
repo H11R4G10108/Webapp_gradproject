@@ -52,6 +52,8 @@ class Post(models.Model):
         verbose_name="Post ID"
     )
     p_date = models.DateTimeField(verbose_name="Thời gian đăng")
+    p_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="URL bài đăng")  # Thêm cột này
+
     content = models.TextField(blank=True, null=True)
 
     district = models.CharField(max_length=100, blank=True, null=True, verbose_name="Quận")

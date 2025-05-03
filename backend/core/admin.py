@@ -7,7 +7,6 @@ admin.site.register(User)
 admin.site.register(UserBookmarkPost)
 
 
-# Dashboard view with district instead of ward
 def dashboard_view(request):
     # Get total post count
     total_posts = Post.objects.count()
