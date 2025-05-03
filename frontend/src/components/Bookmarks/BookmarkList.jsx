@@ -313,7 +313,8 @@ export default function BookmarkList() {
                     </div>
                     
                     <h2 className="text-lg font-bold mb-3 line-clamp-2 text-gray-800">
-                      {bookmark.post.content}
+                    {bookmark.post.content.length > 50 ? `${bookmark.post.content.substring(0, 75)}...` : bookmark.post.content}
+
                     </h2>
                     
                     <div className="space-y-3 mb-4">
