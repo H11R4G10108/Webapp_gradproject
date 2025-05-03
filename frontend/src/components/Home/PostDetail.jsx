@@ -439,7 +439,7 @@ export default function PostDetail() {
               {/* Post Header */}
               <div className="p-6 border-b border-gray-100">
                 <div className="flex justify-between items-start mb-4">
-                  <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h1 className="text-sm font-bold text-gray-800 mb-2">
                     {post.content}
                   </h1>
                   <div className="flex space-x-2">
@@ -478,14 +478,6 @@ export default function PostDetail() {
 
                 <div className="text-2xl font-bold text-orange-500">
                   {formatPrice(post.price)} VNĐ/tháng
-                </div>
-              </div>
-
-              {/* Post Images (Placeholder) */}
-              <div className="bg-gray-100 p-6 flex justify-center items-center">
-                <div className="text-center p-12">
-                  <Squares2X2Icon className="h-20 w-20 mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-500">Hình ảnh phòng trọ</p>
                 </div>
               </div>
 
@@ -555,31 +547,57 @@ export default function PostDetail() {
                   </p>
                 </div>
 
-                {/* Utilities Section - can be expanded based on API data */}
+                {/* Utilities Section  */}
                 <h2 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">
                   Tiện ích
                 </h2>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                  {post.utilities && post.utilities.length > 0 ? (
-                    post.utilities.map((utility, index) => (
-                      <div key={index} className="flex items-center">
-                        <svg
-                          className="h-5 w-5 text-green-500 mr-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span className="text-gray-700">{utility}</span>
-                      </div>
-                    ))
+                  {post.amenities ? (
+                    (() => {
+                      // Parse the amenities string into an array
+                      let amenitiesArray = [];
+                      try {
+                        // Handle the string format that looks like an array
+                        if (typeof post.amenities === "string") {
+                          // Remove the single quotes inside the string and parse as JSON
+                          const cleanedString = post.amenities.replace(
+                            /'/g,
+                            '"'
+                          );
+                          amenitiesArray = JSON.parse(cleanedString);
+                        } else if (Array.isArray(post.amenities)) {
+                          amenitiesArray = post.amenities;
+                        }
+                      } catch (error) {
+                        console.error("Error parsing amenities:", error);
+                      }
+
+                      return amenitiesArray.length > 0 ? (
+                        amenitiesArray.map((utility, index) => (
+                          <div key={index} className="flex items-center">
+                            <svg
+                              className="h-5 w-5 text-green-500 mr-2"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            <span className="text-gray-700">{utility}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="col-span-full text-gray-500">
+                          Không có thông tin về tiện ích
+                        </div>
+                      );
+                    })()
                   ) : (
                     <div className="col-span-full text-gray-500">
                       Không có thông tin về tiện ích
@@ -692,22 +710,6 @@ export default function PostDetail() {
                 >
                   Nhắn tin
                 </a>
-              </div>
-            </div>
-
-            {/* Similar Posts (Placeholder) */}
-            <div className="bg-white shadow-md rounded-xl overflow-hidden">
-              <div className="p-6 border-b border-gray-100">
-                <h2 className="text-xl font-bold text-gray-800">
-                  Phòng trọ tương tự
-                </h2>
-              </div>
-
-              <div className="p-6">
-                <div className="text-center py-8 text-gray-500">
-                  <HomeIcon className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                  <p>Đang tải phòng trọ tương tự...</p>
-                </div>
               </div>
             </div>
 

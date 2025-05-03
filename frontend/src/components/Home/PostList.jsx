@@ -625,7 +625,7 @@ export default function PostList() {
                     </div>
                     
                     <h2 className="text-lg mb-3 line-clamp-2 text-gray-800">
-                      {post.content}
+                    {post.content.length > 50 ? `${post.content.substring(0, 75)}...` : post.content}
                     </h2>
                     
                     <div className="space-y-3 mb-4">

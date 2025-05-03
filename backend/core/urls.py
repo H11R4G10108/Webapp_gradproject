@@ -21,7 +21,7 @@ urlpatterns = [
     path('api/posts/', PostListView.as_view(), name='post-list'),
     path('api/bookmarks/', BookmarkListView.as_view(), name='bookmark-list'),
     path('api/bookmark-for-check/', BookmarkListViewForMark.as_view(), name='bookmark-check'),
-    path('api/bookmark-toggle/<int:postid>/', ToggleBookmarkView.as_view(), name='toggle-bookmark'),
+    path('api/bookmark-toggle/<str:postid>/', ToggleBookmarkView.as_view(), name='toggle-bookmark'),
     path('', api_views.getRoutes),
 
 ]
