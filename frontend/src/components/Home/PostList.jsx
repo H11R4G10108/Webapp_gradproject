@@ -141,7 +141,7 @@ export default function PostList() {
     try {
       const queryParams = getQueryParams();
       const response = await axios.get(
-        `${BASE_URL}/api/posts/?${queryParams}`
+        `${BASE_URL}/posts/?${queryParams}`
       );
   
       setPosts((prevPosts) => {
@@ -191,7 +191,7 @@ export default function PostList() {
   const loadBookmarkedPosts = async () => {
     try {
       const response = await api.get(
-        `${BASE_URL}/api/bookmark-for-check/?userid=${user_id}`
+        `${BASE_URL}/bookmark-for-check/?userid=${user_id}`
       );
       const bookmarkData = response.data || [];
       const bookmarkedIds = new Set(
@@ -215,7 +215,7 @@ export default function PostList() {
   const toggleBookmark = async (postId) => {
     try {
       const response = await api.post(
-        `${BASE_URL}/api/bookmark-toggle/${postId}/`
+        `${BASE_URL}/bookmark-toggle/${postId}/`
       );
 
       setBookmarkedPosts((prev) => {
