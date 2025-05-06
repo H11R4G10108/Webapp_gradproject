@@ -90,9 +90,10 @@ class User(AbstractUser):
 
 
 class UserBookmarkPost(models.Model):
-    markid = models.BigAutoField(db_column='markID', primary_key=True)  # Field name made lowercase.
-    userid = models.ForeignKey(User, on_delete=models.CASCADE, db_column='userID')  # Field name made lowercase.
-    postid = models.ForeignKey(Post, on_delete=models.CASCADE)  # Field name made lowercase.
+    markid = models.BigAutoField(db_column='markID', primary_key=True)
+    userid = models.ForeignKey(User, on_delete=models.CASCADE, db_column='userID')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, db_column='postID')
+
     class Meta:
         db_table = 'userbookmarkpost'
 

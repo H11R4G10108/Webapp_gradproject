@@ -17,6 +17,7 @@ import LandingPage from "./components/Home/LandingPage.jsx";
 import CompareRoom from "./components/Compare/CompareRoom.jsx";
 import Register from "./components/Register/Register.jsx";
 import About from "./components/About/About";
+import NotFound from "./components/NotFoundPage.jsx";
 
 function App() {
   return (
@@ -72,6 +73,7 @@ function App() {
         <Route path="/password-reset/:token" element={<PasswordReset />} />
         <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>
   );
