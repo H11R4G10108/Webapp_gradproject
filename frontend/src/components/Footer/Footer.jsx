@@ -31,35 +31,6 @@ export default function Footer() {
             <p className="text-gray-600">
               Nền tảng tìm kiếm nhà trọ hàng đầu tại Đà Nẵng, kết nối người thuê với chủ trọ một cách nhanh chóng và hiệu quả.
             </p>
-            <div className="flex items-center space-x-4">
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-orange-500 transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook size={20} />
-              </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-orange-500 transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram size={20} />
-              </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-orange-500 transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}
@@ -166,9 +137,6 @@ export default function Footer() {
             </Link>
             <Link to="/about" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">
               Điều khoản sử dụng
-            </Link>
-            <Link to="/sitemap" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">
-              Sitemap
             </Link>
           </div>
         </div>
