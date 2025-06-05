@@ -185,7 +185,7 @@ class ToggleBookmarkView(APIView):
         user = request.user
         post_id = self.kwargs.get("postid")
         post = get_object_or_404(Post, postid=post_id)
-        bookmark, created = UserBookmarkPost.objects.get_or_create(userid=user, post_id=post)
+        bookmark, created = UserBookmarkPost.objects.get_or_create(userid=user, post=post)
 
         if not created:
             bookmark.delete()
