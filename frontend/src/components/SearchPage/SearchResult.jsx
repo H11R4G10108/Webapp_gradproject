@@ -44,7 +44,7 @@ export default function SearchResult() {
 
     try {
       const response = await api.post(
-        `${BASE_URL}/api/bookmark-toggle/${postId}/`
+        `${BASE_URL}/bookmark-toggle/${postId}/`
       );
 
       setBookmarkedPosts((prev) => {
