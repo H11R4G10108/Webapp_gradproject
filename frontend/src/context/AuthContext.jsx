@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("authTokens", JSON.stringify(data));
       navigate("/");
       Swal.fire({
-        title: "Login Successful",
+        title: "Đăng nhập thành công",
         icon: "success",
         toast: true,
         timer: 3000,
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
       console.log(response.status);
       console.log("There was a server issue");
       Swal.fire({
-        title: "Username or password does not exist",
+        title: "Email hoặc mật khẩu sai",
         icon: "error",
         toast: true,
         timer: 6000,
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     if (response.status === 201) {
       navigate("/login");
       Swal.fire({
-        title: "Registration Successful, Login Now",
+        title: "Tạo tài khoản thành công",
         icon: "success",
         toast: true,
         timer: 3000,
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authTokens");
     navigate("/");
     Swal.fire({
-      title: "You have been logged out...",
+      title: "Đăng xuất thành công",
       icon: "success",
       toast: true,
       timer: 3000,

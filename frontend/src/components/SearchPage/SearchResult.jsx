@@ -118,8 +118,13 @@ export default function SearchResult() {
   const loadPage = async (pageUrl) => {
     setLoading(true);
     try {
-      const response = await axios.get(pageUrl);
-      
+      let url = pageUrl;
+      if (pageUrl.startsWith("http")) {
+        const u = new URL(pageUrl);
+        url = u.pathname + u.search;
+      }
+      const response = await api.get(url);
+  
       if (response.data && response.data.results) {
         setPosts(response.data.results);
         setPagination({
@@ -127,9 +132,9 @@ export default function SearchResult() {
           next: response.data.next,
           previous: response.data.previous,
         });
-        
+  
         // Extract page number from URL if possible
-        const pageMatch = pageUrl.match(/page=(\d+)/);
+        const pageMatch = url.match(/page=(\d+)/);
         if (pageMatch && pageMatch[1]) {
           setCurrentPage(parseInt(pageMatch[1]));
         }
