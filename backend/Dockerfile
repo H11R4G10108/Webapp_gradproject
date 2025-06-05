@@ -7,7 +7,7 @@ WORKDIR /app
 # 3️⃣ Install system dependencies (needed for mysqlclient)
 RUN apt-get update && apt-get install -y \
     gcc \
-    python3.10-dev \
+    python3-dev \
     default-libmysqlclient-dev \
     build-essential \
     pkg-config \
