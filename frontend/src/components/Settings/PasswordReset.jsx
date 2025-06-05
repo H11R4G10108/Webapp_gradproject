@@ -25,9 +25,8 @@ export default function PasswordReset() {
             .then((response) => {
                 console.log(response);
                 if (response.status === 200) {
-                    console.log("Your password reset was successfull, you will be directed to the login page in a second");
                     Swal.fire({
-                        title: "Your password reset was successfull, you will be directed to the login page in a second",
+                        title: "Đổi mật khẩu thành công! Bạn sẽ được chuyển đến trang đăng nhập.",
                         icon: "success",
                         toast: true,
                         timer: 2500,
@@ -58,8 +57,8 @@ export default function PasswordReset() {
                     console.log("Error message:", error.message);
                 }
                 Swal.fire({
-                    title: "There was an error",
-                    text: "Please try again",
+                    title: "Có lỗi xảy ra",
+                    text: "Vui lòng thử lại",
                     icon: "error",
                     toast: true,
                     timer: 6000,

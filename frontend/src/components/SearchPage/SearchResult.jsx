@@ -119,24 +119,12 @@ export default function SearchResult() {
     setLoading(true);
     try {
       let url = pageUrl;
-      if (pageUrl.startsWith("http")) {
-        const response = await axios.get(url);
-        if (response.data && response.data.results) {
-          setPosts(response.data.results);
-          setPagination({
-            count: response.data.count,
-            next: response.data.next,
-            previous: response.data.previous,
-          });
-  
-          // Extract page number from URL if possible
-          const pageMatch = url.match(/page=(\d+)/);
-          if (pageMatch && pageMatch[1]) {
-            setCurrentPage(parseInt(pageMatch[1]));
-          }
+      if (url.startsWith("http")) {
+        const u = new URL(url);
+        url = u.pathname + u.search;
+        if (url.startsWith("/api/")) {
+          url = url.replace("/api", "");
         }
-        setLoading(false);
-        return;
       }
       const response = await api.get(url);
   

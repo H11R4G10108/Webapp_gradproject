@@ -16,8 +16,6 @@ export default function Login() {
     const email = e.target.email.value;
     const password = e.target.password.value;
     email.length > 0 && loginUser(email, password);
-    console.log(email);
-    console.log(password);
   };
 
   return (
