@@ -194,7 +194,7 @@ export default function SearchResult() {
       }
       
       try {
-        const response = await api.get(`${BASE_URL}/api/bookmarks/`);
+        const response = await api.get(`${BASE_URL}/bookmarks/`);
         if (response.data && Array.isArray(response.data)) {
           const bookmarkedIds = new Set(
             response.data.map(bookmark => bookmark.post)
