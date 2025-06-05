@@ -169,7 +169,7 @@ class BookmarkListView(ListAPIView):
         user_id = self.request.query_params.get('userid')
         sort_order = self.request.query_params.get('sort', 'desc')  # Default: newest first
         queryset = UserBookmarkPost.objects.filter(userid=user_id)
-        return queryset.order_by('-postid__p_date' if sort_order == 'desc' else 'postid__p_date')
+        return queryset.order_by('-post__p_date' if sort_order == 'desc' else 'post__p_date')
 
 class BookmarkListViewForMark(ListAPIView):
     serializer_class = UserBookmarkPostSerializer
@@ -185,7 +185,7 @@ class ToggleBookmarkView(APIView):
         user = request.user
         post_id = self.kwargs.get("postid")
         post = get_object_or_404(Post, postid=post_id)
-        bookmark, created = UserBookmarkPost.objects.get_or_create(userid=user, postid=post)
+        bookmark, created = UserBookmarkPost.objects.get_or_create(userid=user, post=post)
 
         if not created:
             bookmark.delete()

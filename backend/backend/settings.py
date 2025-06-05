@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["13.236.36.74", "localhost"]
+ALLOWED_HOSTS = ["13.236.36.74", "localhost", "127.0.0.1"]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://trodanang.netlify.app",
