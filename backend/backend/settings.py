@@ -31,7 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://rococo-strudel-02ad6c.netlify.app",
+    "https://trodanang.netlify.app",
 ]
 
 # Application definition
