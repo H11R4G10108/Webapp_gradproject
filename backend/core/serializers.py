@@ -73,7 +73,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class UserBookmarkPostSerializer(serializers.ModelSerializer):
-    post = PostSerializer(source='post', read_only=True)  # Fetch related post details
+    post = PostSerializer(read_only=True)  # Fetch related post details
 
     class Meta:
         model = UserBookmarkPost
