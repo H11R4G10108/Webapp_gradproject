@@ -1,4 +1,4 @@
-import Sidebar from "../Sidebar/Sidebar";
+import Navbar from "../Navbar/Navbar";
 import Sidebar2 from "./Sidebar2";
 import Header from "../Header/Header";
 import useAxios from "../../utils/useAxios";
