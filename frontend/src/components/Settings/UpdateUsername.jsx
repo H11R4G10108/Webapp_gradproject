@@ -63,8 +63,9 @@ export default function UpdateUsername() {
             });
     };
     return (
+          <>
+      <Navbar />
         <div className="flex ">
-            <Sidebar />
             <Sidebar2 />
             <div className='flex flex-col'>
                 <Header />
@@ -91,5 +92,6 @@ export default function UpdateUsername() {
                 </form>
             </div>
         </div>
+            </>
     );
 }
