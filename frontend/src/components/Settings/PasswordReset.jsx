@@ -71,10 +71,10 @@ export default function PasswordReset() {
     };
     return (<div className="flex items-center h-screen bg-slate-100">
         <div className="w-2/3 max-w-md mx-auto bg-slate-100 p-8 rounded-lg shadow-md">
-            <h1 className="text-4xl font-bold text-orange-500 mt-5">Reset Password</h1>
+            <h1 className="text-4xl font-bold text-orange-500 mt-5">Đặt lại mật khẩu</h1>
             <form onSubmit={submitHandler} className="mt-5">
                 <div className="flex flex-col">
-                    <p className="font-medium text-slate-700 pb-1">Password</p>
+                    <p className="font-medium text-slate-700 pb-1">Mật khẩu</p>
                     <input
                         type="password"
                         id="password"
@@ -87,7 +87,7 @@ export default function PasswordReset() {
                     />
                 </div>
                 <div className="flex flex-col">
-                    <p className="font-medium text-slate-700 pb-1">Confirm password</p>
+                    <p className="font-medium text-slate-700 pb-1">Xác nhận mật khẩu</p>
                     <input
                         type="password"
                         id="password2"
@@ -101,7 +101,7 @@ export default function PasswordReset() {
                 </div>
                 {password !== password2 && password !== "" && password2 !== "" && (
                     <span className="text-xs p-1 text-red-700">
-                        Passwords don't match!
+                        Mật khẩu không trùng!
                     </span>
                 )}
                 <p className="text-red-500 text-sm mt-2">{errors.password}</p>
@@ -110,7 +110,7 @@ export default function PasswordReset() {
                     className="w-full p-2 mt-8 hover:bg-orange-300 rounded border text-xm bg-orange-500 text-white"
                     type="submit"
                 >
-                    Reset Password
+                    Cập nhập
                 </button>
             </form>
         </div>

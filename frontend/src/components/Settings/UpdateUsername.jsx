@@ -22,7 +22,7 @@ export default function UpdateUsername() {
                 if (response.status === 200) {
                     console.log("Changed successfully");
                     Swal.fire({
-                        title: "Changed Successfully",
+                        title: "Cập nhập thành công",
                         icon: "success",
                         toast: true,
                         timer: 3000,
@@ -50,8 +50,8 @@ export default function UpdateUsername() {
                     console.log("Error message:", error.message);
                 }
                 Swal.fire({
-                    title: "There was an error",
-                    text: "Please try again",
+                    title: "Có lỗi xảy ra",
+                    text: "Vui lòng thử lại",
                     icon: "error",
                     toast: true,
                     timer: 6000,
@@ -75,7 +75,7 @@ export default function UpdateUsername() {
                             <ArrowLeftIcon className="h-5 w-5 mr-2" />
                         </Link>
                         <div className="flex flex-col mt-4">
-                            <label className="text-sm font-semibold">Username</label>
+                            <label className="text-sm font-semibold">Tên người dùng</label>
                             <input
                                 onChange={(e) => setUsername(e.target.value)}
                                 type="text" className="border border-gray-300 rounded-lg p-2 mt-1" />
@@ -87,7 +87,7 @@ export default function UpdateUsername() {
                             </div>
                         )}
                         </div>
-                        <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold p-2 rounded-lg mt-4 w-40">Update</button>
+                        <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold p-2 rounded-lg mt-4 w-40">Cập nhập</button>
                     </div>
                 </form>
             </div>

@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
       console.log(response.status);
       console.log("There was a server issue");
       Swal.fire({
-        title: "An Error Occured " + response.status,
+        title: "Có lỗi xảy ra: " + response.status,
         icon: "error",
         toast: true,
         timer: 6000,

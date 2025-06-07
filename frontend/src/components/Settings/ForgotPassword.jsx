@@ -20,7 +20,7 @@ export default function ForgotPassword() {
         if (response.status === 200) {
           console.log("Request sent successfully");
           Swal.fire({
-            title: "Request sent Successfully",
+            title: "Yêu cầu thành công",
             icon: "success",
             toast: true,
             timer: 3000,
@@ -41,8 +41,8 @@ export default function ForgotPassword() {
           console.log("Error message:", error.message);
         }
         Swal.fire({
-          title: "There was an error",
-          text: "Please try again",
+          title: "Có lỗi xảy ra",
+          text: "Vui lòng thử lại",
           icon: "error",
           toast: true,
           timer: 6000,

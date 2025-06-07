@@ -22,7 +22,7 @@ export default function UpdateEmail() {
         if (response.status === 200) {
           console.log("Changed successfully");
           Swal.fire({
-            title: "Changed Successfully",
+            title: "Cập nhập thành công",
             icon: "success",
             toast: true,
             timer: 3000,
@@ -50,8 +50,8 @@ export default function UpdateEmail() {
           console.log("Error message:", error.message);
         }
         Swal.fire({
-          title: "There was an error",
-          text: "Please try again",
+          title: "Có lỗi xảy ra",
+          text: "Vui lòng thử lại",
           icon: "error",
           toast: true,
           timer: 6000,
@@ -96,7 +96,7 @@ export default function UpdateEmail() {
                 )}
               </div>
               <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold p-2 rounded-lg mt-4 w-40">
-                Update
+                Cập nhập
               </button>
             </div>
           </form>
