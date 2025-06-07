@@ -215,17 +215,6 @@ export default function About() {
                     quận huyện cụ thể để xem danh sách phòng trọ phù hợp.
                   </p>
                 </div>
-
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-800 mb-2">
-                    Làm thế nào để đăng tin cho thuê?
-                  </h4>
-                  <p className="text-gray-600">
-                    Chủ trọ cần đăng ký tài khoản và xác thực thông tin, sau đó
-                    có thể đăng tin cho thuê trọ trên hệ thống.
-                  </p>
-                </div>
-
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-medium text-gray-800 mb-2">
                     Thông tin phòng trọ có chính xác không?

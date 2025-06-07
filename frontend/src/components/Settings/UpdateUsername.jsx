@@ -1,4 +1,4 @@
-import Sidebar from "../Sidebar/Sidebar";
+import Navbar from "../Navbar/Navbar";
 import Sidebar2 from "./Sidebar2";
 import Header from "../Header/Header";
 import useAxios from "../../utils/useAxios";
@@ -63,8 +63,9 @@ export default function UpdateUsername() {
             });
     };
     return (
+          <>
+      <Navbar />
         <div className="flex ">
-            <Sidebar />
             <Sidebar2 />
             <div className='flex flex-col'>
                 <Header />
@@ -91,5 +92,6 @@ export default function UpdateUsername() {
                 </form>
             </div>
         </div>
+            </>
     );
 }
