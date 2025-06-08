@@ -35,7 +35,7 @@ def password_reset_token_created(reset_password_token, *args, **kwargs):
     plain_message = strip_tags(html_message)
 
     msg = EmailMultiAlternatives(
-        subject = "Request for resetting password for {title}".format(title=reset_password_token.user.email),
+        subject = "Yêu cầu đổi mật khẩu cho tài khoản {title}".format(title=reset_password_token.user.email),
         body=plain_message,
         from_email = "sender@example.com",
         to=[reset_password_token.user.email]
