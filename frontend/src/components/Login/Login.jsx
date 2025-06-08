@@ -25,12 +25,13 @@ export default function Login() {
     }));
   };
 
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isPasswordValid = password.length > 0;
+  const isFormValid = isEmailValid && isPasswordValid;
+
   const submitHandler = (e) => {
     e.preventDefault();
-    // Simple validation
-    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const isPasswordValid = password.length > 0;
-    if (isEmailValid && isPasswordValid) {
+    if (isFormValid) {
       loginUser(email, password);
     } else {
       setFocusedFields({
@@ -43,85 +44,96 @@ export default function Login() {
   return (
     <div>
       <Navbar />
-      <div className="flex justify-center items-center mt-5">
-        <div className="max-w-md mx-auto p-10 gap-20">
+      <div className="flex justify-center items-center mt-8 min-h-[calc(100vh-80px)]">
+        <div className="max-w-md w-full mx-auto p-10 rounded-xl bg-white shadow-lg">
           <h1
-            className="text-3xl font-bold text-orange-500 text-shadow-sm mb-5"
+            className="text-3xl font-bold text-orange-500 text-shadow-sm mb-8 text-center"
             id="typewriter"
           >
             Trọ Đà Nẵng xin chào!
           </h1>
-          <form onSubmit={submitHandler}>
-            <label>Email*</label>
-            <input
-              className="w-full py-3 border-b-2 border-slate-200 px-3 focus:outline-none focus:border-slate-500 hover:shadow"
-              name="email"
-              type="email"
-              placeholder="Nhập email"
-              required={true}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={handleFocus}
-              autoComplete="email"
-              maxLength="100"
-            />
-            <span
-              className={`text-xs p-1 text-red-700 ${
-                focusedFields.email &&
-                email &&
-                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-                  ? "block"
-                  : "hidden"
-              }`}
-            >
-              Địa chỉ email không hợp lệ!
-            </span>
-            <label>Mật khẩu*</label>
-            <div className="relative">
+          <form onSubmit={submitHandler} className="flex flex-col gap-6">
+            {/* Email */}
+            <div className="flex flex-col gap-2">
+              <label className="font-medium" htmlFor="email">Email*</label>
               <input
-                className="w-full py-3 border-b-2 border-slate-200 px-3 focus:outline-none focus:border-slate-500 hover:shadow"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Nhập mật khẩu"
-                required={true}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                className="w-full py-3 border-b-2 border-slate-200 px-3 focus:outline-none focus:border-slate-500 hover:shadow rounded transition"
+                name="email"
+                id="email"
+                type="email"
+                placeholder="Nhập email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 onBlur={handleFocus}
-                autoComplete="current-password"
-                maxLength="128"
+                autoComplete="email"
+                maxLength={100}
               />
-              <button
-                type="button"
-                className="absolute right-2 top-3 text-gray-500 focus:outline-none"
-                onClick={togglePasswordVisibility}
-                tabIndex={-1}
+              <span
+                className={`text-xs p-1 text-red-700 ${
+                  focusedFields.email &&
+                  email &&
+                  !isEmailValid
+                    ? "block"
+                    : "hidden"
+                }`}
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
+                Địa chỉ email không hợp lệ!
+              </span>
             </div>
-            <span
-              className={`text-xs p-1 text-red-700 ${
-                focusedFields.password && !password ? "block" : "hidden"
-              }`}
-            >
-              Vui lòng nhập mật khẩu!
-            </span>
-            <a
-              href="/forgot-password"
-              className="font-medium text-orange-400 text-sm mt-5 hover:underline block"
-            >
-              Quên mật khẩu?
-            </a>
-            <a
-              href="/register"
-              className="font-medium text-orange-400 text-sm mt-2 hover:underline block"
-            >
-              Chưa có tài khoản?
-            </a>
+            {/* Password */}
+            <div className="flex flex-col gap-2">
+              <label className="font-medium" htmlFor="password">Mật khẩu*</label>
+              <div className="relative">
+                <input
+                  className="w-full py-3 border-b-2 border-slate-200 px-3 focus:outline-none focus:border-slate-500 hover:shadow rounded transition"
+                  name="password"
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Nhập mật khẩu"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onBlur={handleFocus}
+                  autoComplete="current-password"
+                  maxLength={128}
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 focus:outline-none"
+                  onClick={togglePasswordVisibility}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              <span
+                className={`text-xs p-1 text-red-700 ${
+                  focusedFields.password && !password ? "block" : "hidden"
+                }`}
+              >
+                Vui lòng nhập mật khẩu!
+              </span>
+            </div>
+            <div className="flex flex-col gap-2 mt-2">
+              <a
+                href="/forgot-password"
+                className="font-medium text-orange-400 text-sm hover:underline"
+              >
+                Quên mật khẩu?
+              </a>
+              <a
+                href="/register"
+                className="font-medium text-orange-400 text-sm hover:underline"
+              >
+                Chưa có tài khoản?
+              </a>
+            </div>
             <button
               id="submit-btn"
-              className="w-full mt-5 py-3 text-white font-semibold rounded-md bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 shadow-md hover:shadow-lg transition-all duration-300"
+              className="w-full mt-4 py-3 text-white font-semibold rounded-md bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               type="submit"
+              disabled={!isFormValid}
             >
               Đăng nhập
             </button>
