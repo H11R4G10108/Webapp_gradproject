@@ -1,30 +1,68 @@
-Web application for managing rental room
+# Rental Room Finder Web App
 
-## Techstack:
+A full-stack web application that helps users easily search, compare, and bookmark rental listings. This project leverages Facebook data to streamline the rental search process, especially in areas with high demand like Da Nang, Vietnam.
 
-- Frontend: HTML, CSS with Tailwind library, React.js framework 
+---
 
-- Backend: Python with Django framework
+## Features
 
-- Database: MySQL (deployed on AWS RDS)
+### Post Features
+- Display rental listings with link to original Facebook post
+- Advanced search with filters (date, location, price, etc.)
+- Compare multiple listings side-by-side
+- Bookmark favorite listings
 
-## Supported features:
+### User Management
+- Sign up / Log in / Log out
+- Update account info (username, email, password)
+- Reset password functionality
 
-Posts: 
+### Admin Panel
+- Dashboard with data visualization (charts)
+- Full CRUD for rental posts
 
-- Display posts + link to full content
+---
 
-- Search function with filters (by date, etc.)
+## Project Objectives
+- Analyze Facebook rental posts to understand market needs in Da Nang
+- Build a user-friendly platform to support rental information lookup
+- Develop a Selenium-based bot to scrape rental data from Facebook
+- Automate scraping every 5 hours using GitHub Actions + Railway
+- Continuously test and improve the system during development
 
-- Compare room function
+---
 
-- Bookmark
+## Tech Stack & Architecture
 
-User Management:
+### Frontend
+- ReactJS (deployed via Netlify)
 
-- Login & Logout, account management (change username, email, password, reset password)
+### Backend
+- Django + Django REST Framework
+- Hosted on AWS EC2 using Docker Compose
+- API Gateway for routing requests
 
-Admin:
+### Database
+- MySQL on Amazon RDS
 
-- Dashboard view
-- Post CRUD 
+### Scraping Tool
+- Python + Selenium (Dockerized and deployed with Railway)
+- Scheduled via GitHub Actions (runs every 5 hours)
+
+---
+
+## Installation & Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/H11R4G10108/Webapp_gradproject.git
+cd Webapp_gradproject
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+
+# Backend
+cd ../backend
+docker-compose up --build
