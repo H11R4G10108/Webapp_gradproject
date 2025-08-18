@@ -4,6 +4,12 @@ A full-stack web application that helps users easily search, compare, and bookma
 
 ---
 
+## 🎥 Demo Video
+Click onto the thumbnail to watch!
+[![Watch the Demo](https://img.youtube.com/vi/NGFTKg_bF8A/maxresdefault.jpg)](https://www.youtube.com/watch?v=NGFTKg_bF8A)
+
+---
+
 ## Features
 
 ### Post Features
