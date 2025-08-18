@@ -51,8 +51,8 @@ Click onto the thumbnail to watch!
 ### Database
 - MySQL on Amazon RDS
 
-### Scraping Tool
-- Python + Selenium (Dockerized and deployed with Railway)
+### Scraping Tool (See here: https://github.com/Espressol7325/Rental_Listing_Scraper)
+- Python + Selenium (Dockerized and deployed with Railway) 
 - Scheduled via GitHub Actions (runs every 5 hours)
 
 ---
