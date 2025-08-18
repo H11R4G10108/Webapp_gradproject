@@ -33,7 +33,7 @@ Click onto the thumbnail to watch!
 - Analyze Facebook rental posts to understand market needs in Da Nang
 - Build a user-friendly platform to support rental information lookup
 - Develop a Selenium-based bot to scrape rental data from Facebook
-- Automate scraping every 5 hours using GitHub Actions + Railway
+- Automate scraping every 5 hours using GitHub Actions + Railway (See here: https://github.com/Espressol7325/Rental_Listing_Scraper)
 - Continuously test and improve the system during development
 
 ---
